@@ -839,46 +839,8 @@ static void doPadDrive (int argc, char *argv [])
 
 static void doUsbP (int argc, char *argv [])
 {
-  int model, rev, mem, maker, overVolted ;
-
-  if (argc != 3)
-  {
-    fprintf (stderr, "Usage: %s usbp high|low\n", argv [0]) ;
-    exit (1) ;
-  }
-
-// Make sure we're on a B+
-
-  piBoardId (&model, &rev, &mem, &maker, &overVolted) ;
-
-  if (model != PI_MODEL_BP)
-  {
-    fprintf (stderr, "USB power contol is applicable to B+ boards only.\n") ;
-    exit (1) ;
-  }
-    
-// Need to force BCM_GPIO mode:
-
-  wiringPiSetupGpio () ;
-
-  if ((strcasecmp (argv [2], "high") == 0) || (strcasecmp (argv [2], "hi") == 0))
-  {
-    digitalWrite (PI_USB_POWER_CONTROL, 1) ;
-    pinMode (PI_USB_POWER_CONTROL, OUTPUT) ;
-    printf ("Switched to HIGH current USB (1.2A)\n") ;
-    return ;
-  }
-
-  if ((strcasecmp (argv [2], "low") == 0) || (strcasecmp (argv [2], "lo") == 0))
-  {
-    digitalWrite (PI_USB_POWER_CONTROL, 0) ;
-    pinMode (PI_USB_POWER_CONTROL, OUTPUT) ;
-    printf ("Switched to LOW current USB (600mA)\n") ;
-    return ;
-  }
-
-  fprintf (stderr, "Usage: %s usbp high|low\n", argv [0]) ;
-  exit (1) ;
+    fprintf (stderr, "USB power is not supported\n", argv [0]) ;
+    return;
 }
 
 

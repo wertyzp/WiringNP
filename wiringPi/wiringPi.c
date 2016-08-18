@@ -204,7 +204,8 @@ static volatile uint32_t *timerIrqRaw;
 #define MAP_SIZE (4096*2)
 #define MAP_MASK (MAP_SIZE - 1)
 //sunxi_pwm
-#define SUNXI_PWM_BASE (0x01c20e00)
+//#define SUNXI_PWM_BASE (0x01c20e00)
+#define SUNXI_PWM_BASE (0x01c21400)
 #define SUNXI_PWM_CTRL_REG  (SUNXI_PWM_BASE)
 #define SUNXI_PWM_CH0_PERIOD  (SUNXI_PWM_BASE + 0x4)
 #define SUNXI_PWM_CH1_PERIOD  (SUNXI_PWM_BASE + 0x8)
@@ -239,7 +240,7 @@ static volatile uint32_t *timerIrqRaw;
 //	#define GPIO_BASE_BP		(SUNXI_GPIO_BASE)
 #define GPIO_BASE_BP  (0x01C20000)
 #define GPIO_TIMER_BP  (0x0000B000)
-#define GPIO_PWM_BP  (0x01c20000)  //need 4k*n
+#define GPIO_PWM_BP  (0x01C21000)  //need 4k*n
 
 static int wiringPinMode = WPI_MODE_UNINITIALISED;
 int wiringPiCodes = FALSE;
@@ -679,7 +680,7 @@ static int pwmmode = 0;
  *********************************************************************************
  */
 
-/*add for BananaPro by LeMaker team*/
+
 uint32_t readl(uint32_t addr) {
     uint32_t val = 0;
     uint32_t mmap_base = (addr & ~MAP_MASK);
@@ -731,9 +732,12 @@ void sunxi_pwm_set_mode(int mode) {
 
 void sunxi_pwm_set_clk(int clk) {
     int val = 0;
-
+    if (wiringPiDebug)
+        printf(">>function%s,no:%d\n", __func__, __LINE__);
     // sunxi_pwm_set_enable(0);
     val = readl(SUNXI_PWM_CTRL_REG);
+    if (wiringPiDebug)
+        printf("read reg val: 0x%x\n", val);
     //clear clk to 0
     val &= 0xf801f0;
     val |= ((clk & 0xf) << 15); //todo check wether clk is invalid or not
@@ -750,6 +754,7 @@ void sunxi_pwm_set_clk(int clk) {
 uint32_t sunxi_pwm_get_period(void) {
     uint32_t period_cys = 0;
     period_cys = readl(SUNXI_PWM_CH1_PERIOD); //get ch1 period_cys
+    printf("periodcys: %d\n", period_cys);
     period_cys &= 0xffff0000; //get period_cys
     period_cys = period_cys >> 16;
     if (wiringPiDebug)
@@ -776,10 +781,17 @@ void sunxi_pwm_set_period(int period_cys) {
     period_cys &= 0xffff; //set max period to 2^16
     period_cys = period_cys << 16;
     val = readl(SUNXI_PWM_CH1_PERIOD);
+    if (wiringPiDebug)
+        printf("read reg val: 0x%x\n", val);
     val &= 0x0000ffff;
     period_cys |= val;
+    if (wiringPiDebug)
+        printf("write reg val: 0x%x\n", period_cys);
     writel(period_cys, SUNXI_PWM_CH1_PERIOD);
     delay(1);
+    val = readl(SUNXI_PWM_CH1_PERIOD);
+    if (wiringPiDebug)
+        printf("readback reg val: 0x%x\n", val);
 
 }
 
@@ -789,9 +801,13 @@ void sunxi_pwm_set_act(int act_cys) {
     if (wiringPiDebug)
         printf(">>func:%s no:%d\n", __func__, __LINE__);
     per0 = readl(SUNXI_PWM_CH1_PERIOD);
+    if (wiringPiDebug)
+        printf("read reg val: 0x%x\n", per0);
     per0 &= 0xffff0000;
     act_cys &= 0xffff;
     act_cys |= per0;
+    if (wiringPiDebug)
+        printf("write reg val: 0x%x\n", act_cys);
     writel(act_cys, SUNXI_PWM_CH1_PERIOD);
     delay(1);
 }
@@ -851,7 +867,7 @@ void sunxi_set_gpio_mode(int pin, int mode) {
         else if (PWM_OUTPUT == mode) {
             // set pin PWMx to pwm mode
             regval &= ~(7 << offset);
-            regval |= (0x2 << offset);
+            regval |= (0x3 << offset);
             if (wiringPiDebug)
                 printf(">>>>>line:%d PWM mode ready to set val: 0x%x\n", __LINE__, regval);
             writel(regval, phyaddr);
@@ -1441,9 +1457,9 @@ void pinMode(int pin, int mode) {
             wiringPinMode = OUTPUT;
             return;
         } else if (mode == PWM_OUTPUT) {
-            if (pin != 259) {
+            if (pin != 6) {
                 printf("the pin you choose doesn't support hardware PWM\n");
-                printf("you can select PI3 for PWM pin\n");
+                printf("you can select wiringPi pin %d for PWM pin\n", 1);
                 printf("or you can use it in softPwm mode\n");
                 return;
             }
@@ -1649,7 +1665,7 @@ void pwmWrite(int pin, int value) {
             printf("[%s:L%d] the pin:%d is invaild,please check it over!\n", __func__, __LINE__, pin);
             return;
         }
-        if (pin != 259) {
+        if (pin != 6) {
             printf("please use soft pwmmode or choose PWM pin\n");
             return;
         }
@@ -2029,7 +2045,8 @@ int wiringPiSetup(void) {
 
 
     // GPIO:
-    gpio = (uint32_t *) mmap(0, BLOCK_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, GPIO_BASE_BP);
+    // BLOCK SIZE * 2 increases range to include pwm addresses
+    gpio = (uint32_t *) mmap(0, BLOCK_SIZE*10, PROT_READ | PROT_WRITE, MAP_SHARED, fd, GPIO_BASE_BP);
     if ((int32_t) gpio == -1)
         return wiringPiFailure(WPI_ALMOST, "wiringPiSetup: mmap (GPIO) failed: %s\n", strerror(errno));
 

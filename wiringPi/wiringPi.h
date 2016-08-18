@@ -71,7 +71,8 @@
 // Pi model types and version numbers
 //	Intended for the GPIO program Use at your own risk.
 
-#define	PI_MODEL_M1	0
+#define PI_MODEL_UNKNOWN 0
+#define	PI_MODEL_M1	1
 
 #define	PI_VERSION_UNKNOWN	0
 #define	PI_VERSION_1		1
