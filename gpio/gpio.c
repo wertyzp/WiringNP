@@ -795,40 +795,6 @@ void doMode (int argc, char *argv [])
 }
 
 
-/*
- * doPadDrive:
- *	gpio drive group value
- *********************************************************************************
- */
-
-static void doPadDrive (int argc, char *argv [])
-{
-  int group, val ;
-
-  if (argc != 4)
-  {
-    fprintf (stderr, "Usage: %s drive group value\n", argv [0]) ;
-    exit (1) ;
-  }
-
-  group = atoi (argv [2]) ;
-  val   = atoi (argv [3]) ;
-
-  if ((group < 0) || (group > 2))
-  {
-    fprintf (stderr, "%s: drive group not 0, 1 or 2: %d\n", argv [0], group) ;
-    exit (1) ;
-  }
-
-  if ((val < 0) || (val > 7))
-  {
-    fprintf (stderr, "%s: drive value not 0-7: %d\n", argv [0], val) ;
-    exit (1) ;
-  }
-
-  setPadDrive (group, val) ;
-}
-
 
 /*
  * doUsbP:
@@ -839,87 +805,9 @@ static void doPadDrive (int argc, char *argv [])
 
 static void doUsbP (int argc, char *argv [])
 {
-    fprintf (stderr, "USB power is not supported\n", argv [0]) ;
+    fprintf (stderr, "USB power is not supported\n") ;
     return;
 }
-
-
-/*
- * doGbw:
- *	gpio gbw channel value
- *	Gertboard Write - To the Analog output
- *********************************************************************************
- */
-
-static void doGbw (int argc, char *argv [])
-{
-  int channel, value ;
-
-  if (argc != 4)
-  {
-    fprintf (stderr, "Usage: %s gbw <channel> <value>\n", argv [0]) ;
-    exit (1) ;
-  }
-
-  channel = atoi (argv [2]) ;
-  value   = atoi (argv [3]) ;
-
-  if ((channel < 0) || (channel > 1))
-  {
-    fprintf (stderr, "%s: gbw: Channel number must be 0 or 1\n", argv [0]) ;
-    exit (1) ;
-  }
-
-  if ((value < 0) || (value > 255))
-  {
-    fprintf (stderr, "%s: gbw: Value must be from 0 to 255\n", argv [0]) ;
-    exit (1) ;
-  }
-
-  if (gertboardAnalogSetup (64) < 0)
-  {
-    fprintf (stderr, "Unable to initialise the Gertboard SPI interface: %s\n", strerror (errno)) ;
-    exit (1) ;
-  }
-
-  analogWrite (64 + channel, value) ;
-}
-
-
-/*
- * doGbr:
- *	gpio gbr channel
- *	From the analog input
- *********************************************************************************
- */
-
-static void doGbr (int argc, char *argv [])
-{
-  int channel ;
-
-  if (argc != 3)
-  {
-    fprintf (stderr, "Usage: %s gbr <channel>\n", argv [0]) ;
-    exit (1) ;
-  }
-
-  channel = atoi (argv [2]) ;
-
-  if ((channel < 0) || (channel > 1))
-  {
-    fprintf (stderr, "%s: gbr: Channel number must be 0 or 1\n", argv [0]) ;
-    exit (1) ;
-  }
-
-  if (gertboardAnalogSetup (64) < 0)
-  {
-    fprintf (stderr, "Unable to initialise the Gertboard SPI interface: %s\n", strerror (errno)) ;
-    exit (1) ;
-  }
-
-  printf ("%d\n", analogRead (64 + channel)) ;
-}
-
 
 /*
  * doWrite:
