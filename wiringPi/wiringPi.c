@@ -285,7 +285,6 @@ static uint64_t epochMilli, epochMicro;
 
 static int wiringPiMode = WPI_MODE_UNINITIALISED;
 static volatile int pinPass = -1;
-static pthread_mutex_t pinMutex;
 
 // Debugging & Return codes
 
@@ -304,7 +303,7 @@ static int sysFds [64] ={
 
 // ISR Data
 
-static void (*isrFunctions [64])(void);
+//static void (*isrFunctions [64])(void);
 
 
 // Doing it the Arduino way with lookup tables...
@@ -325,125 +324,6 @@ static int *pinToGpio;
 
 static int *physToGpio;
 
-// gpioToGPFSEL:
-//	Map a BCM_GPIO pin to it's Function Selection
-//	control port. (GPFSEL 0-5)
-//	Groups of 10 - 3 bits per Function - 30 bits per port
-
-static uint8_t gpioToGPFSEL [] ={
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-    3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-    4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-    5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-};
-
-
-// gpioToShift
-//	Define the shift up for the 3 bits per pin in each GPFSEL port
-
-static uint8_t gpioToShift [] ={
-    0, 3, 6, 9, 12, 15, 18, 21, 24, 27,
-    0, 3, 6, 9, 12, 15, 18, 21, 24, 27,
-    0, 3, 6, 9, 12, 15, 18, 21, 24, 27,
-    0, 3, 6, 9, 12, 15, 18, 21, 24, 27,
-    0, 3, 6, 9, 12, 15, 18, 21, 24, 27,
-};
-
-
-// gpioToGPSET:
-//	(Word) offset to the GPIO Set registers for each GPIO pin
-
-static uint8_t gpioToGPSET [] ={
-    7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-    8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-};
-
-// gpioToGPCLR:
-//	(Word) offset to the GPIO Clear registers for each GPIO pin
-
-static uint8_t gpioToGPCLR [] ={
-    10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
-    11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,
-};
-
-
-// gpioToGPLEV:
-//	(Word) offset to the GPIO Input level registers for each GPIO pin
-
-static uint8_t gpioToGPLEV [] ={
-    13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13,
-    14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14,
-};
-
-// GPPUD:
-//	GPIO Pin pull up/down register
-
-#define GPPUD 37
-
-// gpioToPUDCLK
-//	(Word) offset to the Pull Up Down Clock regsiter
-
-static uint8_t gpioToPUDCLK [] ={
-    38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38,
-    39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39,
-};
-
-
-// gpioToPwmPort
-//	The port value to put a GPIO pin into PWM mode
-
-static uint8_t gpioToPwmPort [] ={
-    0, 0, 0, 0, 0, 0, 0, 0, //  0 ->  7
-    0, 0, 0, 0, PWM0_DATA, PWM1_DATA, 0, 0, //  8 -> 15
-    0, 0, PWM0_DATA, PWM1_DATA, 0, 0, 0, 0, // 16 -> 23
-    0, 0, 0, 0, 0, 0, 0, 0, // 24 -> 31
-    0, 0, 0, 0, 0, 0, 0, 0, // 32 -> 39
-    PWM0_DATA, PWM1_DATA, 0, 0, 0, PWM1_DATA, 0, 0, // 40 -> 47
-    0, 0, 0, 0, 0, 0, 0, 0, // 48 -> 55
-    0, 0, 0, 0, 0, 0, 0, 0, // 56 -> 63
-
-};
-
-// gpioToGpClkALT:
-//	ALT value to put a GPIO pin into GP Clock mode.
-//	On the Pi we can really only use BCM_GPIO_4 and BCM_GPIO_21
-//	for clocks 0 and 1 respectively, however I'll include the full
-//	list for completeness - maybe one day...
-
-#define GPIO_CLOCK_SOURCE 1
-
-// gpioToGpClkALT0:
-
-
-// gpioToClk:
-//	(word) Offsets to the clock Control and Divisor register
-
-static uint8_t gpioToClkCon [] ={
-    -1, -1, -1, -1, 28, 30, 32, -1, //  0 ->  7
-    -1, -1, -1, -1, -1, -1, -1, -1, //  8 -> 15
-    -1, -1, -1, -1, 28, 30, -1, -1, // 16 -> 23
-    -1, -1, -1, -1, -1, -1, -1, -1, // 24 -> 31
-    28, -1, 28, -1, -1, -1, -1, -1, // 32 -> 39
-    -1, -1, 28, 30, 28, -1, -1, -1, // 40 -> 47
-    -1, -1, -1, -1, -1, -1, -1, -1, // 48 -> 55
-    -1, -1, -1, -1, -1, -1, -1, -1, // 56 -> 63
-};
-
-static uint8_t gpioToClkDiv [] ={
-    -1, -1, -1, -1, 29, 31, 33, -1, //  0 ->  7
-    -1, -1, -1, -1, -1, -1, -1, -1, //  8 -> 15
-    -1, -1, -1, -1, 29, 31, -1, -1, // 16 -> 23
-    -1, -1, -1, -1, -1, -1, -1, -1, // 24 -> 31
-    29, -1, 29, -1, -1, -1, -1, -1, // 32 -> 39
-    -1, -1, 29, 31, 29, -1, -1, -1, // 40 -> 47
-    -1, -1, -1, -1, -1, -1, -1, -1, // 48 -> 55
-    -1, -1, -1, -1, -1, -1, -1, -1, // 56 -> 63
-};
-
-
-/*add for BananaPro by LeMaker team*/
 //map tableb for BP
 
 static int *physToPin;
@@ -485,7 +365,7 @@ static int upDnConvert[3] = {7, 7, 5};
 // nanopi m1 done
 static int pinToGpio_BP [64] ={
     0, 6, // 0, 1
-    13, 200, // 2, 3
+    2, 3, // 2, 3
     200, 201, // 4  5
     1, 203, // 6, 7
     12, 11, // 8, 9
@@ -568,14 +448,14 @@ static int syspin [64] ={
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 };
 
-static int edge [64] ={
+/*static int edge [64] ={
     -1, -1, -1, -1, 4, -1, -1, 7, //support the INT
     8, 9, 10, 11, -1, -1, 14, 15,
     -1, 17, -1, -1, -1, -1, 22, 23,
     24, 25, -1, 27, -1, -1, -1, -1,
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-};
+};*/
 
 static int pinToGpioR3 [64] ={
     17, 18, 27, 22, 23, 24, 25, 4, // From the Original Wiki - GPIO 0 through 7:	wpi  0 -  7
@@ -687,7 +567,7 @@ uint32_t readl(uint32_t addr) {
     uint32_t mmap_seek = ((addr - mmap_base) >> 2);
     val = *(gpio + mmap_seek);
     return val;
-
+    
 }
 
 void writel(uint32_t val, uint32_t addr) {
@@ -695,8 +575,47 @@ void writel(uint32_t val, uint32_t addr) {
     uint32_t mmap_seek = ((addr - mmap_base) >> 2);
     *(gpio + mmap_seek) = val;
 }
-//pwm for BananaPro only for pwm1
+inline uint32_t bitvalrange(uint32_t val, int index, int to) {
+    if (to < 0) {
+        to = index + 1;
+    }
+    uint32_t mask = 0xffffffff << (31 - index) >> (to - 1);
+    return (val & mask) >> (to - 1);
+}
 
+inline uint32_t bitval(uint32_t val, int index) {
+    return bitvalrange(val, index, index);
+}
+
+/*
+void print_control_reg() {
+    uint32_t val = 0;
+    int ch1_prescal = 0;
+    int ch0_prescal = 0;
+    
+// #define SUNXI_PWM_CH1_EN   (1 << 19)
+// #define SUNXI_PWM_CH1_ACT_STA  (1 << 20)
+// #define SUNXI_PWM_SCLK_CH1_GATING (1 << 21)
+// #define SUNXI_PWM_CH1_MS_MODE  (1 << 22) //pulse mode
+// #define SUNXI_PWM_CH1_PUL_START  (1 << 23)
+     
+    val = readl(SUNXI_PWM_CTRL_REG);
+    ch1_prescal = (val & (0b111 << 18)) >> 15;
+    printf("| Bit |R/W|   NAME                | VALUE |\n");
+    printf("|31:30| / |     /                 |   /.  |\n");
+    printf("|  29 | RO|PWM1_RDY               |   %d  |\n", bitval(val, 29));
+    printf("|  28 | RO|PWM0_RDY               |   %d  |\n", bitval(val, 28));
+    printf("|27:25| / |     /                 |   /   |\n");
+    printf("|  24 |R/W|PWM1_BYPASS            |   %d  |\n", bitval(val, 24));
+    printf("|  23 |R/W|PWM_CH1_PULSE_OUT_START|   %d  |\n", bitval(val, 23));
+    printf("|  22 |R/W|PWM_CH1_MODE           |   %d  |\n", bitval(val, 22));
+    printf("|  21 |R/W|PWM_CH1_CLK_GATING     |   %d  |\n", bitval(val, 21));
+    printf("|  20 |R/W|PWM_CH1_ACT_STATE      |   %d  |\n", bitval(val, 20));
+    printf("|  19 |R/W|PWM_CH1_EN             |   %d  |\n", bitval(val, 19));
+    printf("|18:15|R/W|PWM_CH1_PRESCAL        | %03d  |\n", bitvalrange(val, 18, 15));
+
+}
+*/
 void sunxi_pwm_set_enable(int en) {
     int val = 0;
     val = readl(SUNXI_PWM_CTRL_REG);
@@ -710,6 +629,7 @@ void sunxi_pwm_set_enable(int en) {
         printf(">>function%s,no:%d,enable? :0x%x\n", __func__, __LINE__, val);
     writel(val, SUNXI_PWM_CTRL_REG);
     delay(1);
+    //print_control_reg();
 }
 
 void sunxi_pwm_set_mode(int mode) {
@@ -1846,6 +1766,7 @@ int waitForInterrupt(int pin, int mS) {
  *********************************************************************************
  */
 
+/*
 static void *interruptHandler(void *arg) {
     int myPin;
 
@@ -1860,6 +1781,7 @@ static void *interruptHandler(void *arg) {
 
     return NULL;
 }
+*/
 
 /*
  * wiringPiISR:
@@ -1872,6 +1794,8 @@ static void *interruptHandler(void *arg) {
 int wiringPiISR(int pin, int mode, void (*function)(void)) {
     int bcmGpioPin;
 
+    return wiringPiFailure(WPI_FATAL, "wiringPiISR: Not implemented");
+    
     if ((pin < 0) || (pin > 63))
         return wiringPiFailure(WPI_FATAL, "wiringPiISR: pin must be 0-63 (%d)\n", pin);
 
@@ -1890,8 +1814,9 @@ int wiringPiISR(int pin, int mode, void (*function)(void)) {
         return -1;
     }
 
-    if (edge[bcmGpioPin] == -1)
-        return wiringPiFailure(WPI_FATAL, "wiringPiISR: pin not sunpprt on bananaPi (%d,%d)\n", pin, bcmGpioPin);
+    //if (edge[bcmGpioPin] == -1)
+        return wiringPiFailure(WPI_FATAL, "wiringPiISR: pin not sunpprt on Nano PI M1 (%d,%d)\n", pin, bcmGpioPin);
+    
 }
 
 /*
@@ -2146,7 +2071,7 @@ int wiringPiSetupSys(void) {
     //boardRev = piBoardRev();
     pinToGpio = pinToGpio_BP;
     physToGpio = physToGpio_BP;
-    physToPin = physToPin;
+    physToPin = physToPinR3;
 
     for (pin = 1; pin < 32; ++pin) {
         sprintf(fName, "/sys/class/gpio/gpio%d/value", pin);
