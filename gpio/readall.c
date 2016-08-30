@@ -77,7 +77,7 @@ static void doReadallExternal (void)
 
 static char *alts [] =
 {
-  "IN", "OUT", "ALT5", "ALT4", "ALT0", "ALT1", "ALT2", "ALT3"
+  "IN", "OUT", "ALT5", "ALT4", "ALT0", "ALT1", "ALT2", "OFF"
 } ;
 
 /* guenter static int physToWpi [64] = 
@@ -138,7 +138,7 @@ static int physToWpi [64] =
   24,  27,   //35, 36
   25,  28,   //37, 38
   -1,  29,   //39, 40
-   -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, //41-> 55
+   -1, -1, 32, 33, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, //41-> 55
    -1, -1, -1, -1, -1, -1, -1, -1 // 56-> 63
 } ;
 //guenter ende
@@ -203,8 +203,10 @@ static char *physNames [64] =
  " GPIO.24", "CTS1    ",
  " GPIO.25", "TxD1    ",
  "      0v", "RxD1    ",
-       NULL, NULL,
-       NULL, NULL,
+  
+ "      0v", "      5v", 
+ "  GPIO.4", "  GPIO.5",  
+  
        NULL, NULL,
        NULL, NULL,
        NULL, NULL,
@@ -222,7 +224,7 @@ static char *physNames [64] =
  *********************************************************************************
  */
 
-static void readallPhys (int physPin)
+static void readallPhys (int physPin, int pair)
 {
   int pin ;
 
@@ -251,6 +253,10 @@ static void readallPhys (int physPin)
 // Pin numbers:
 
   printf (" | %2d", physPin) ;
+  if (!pair) {
+      printf (" |\n") ;
+      return;
+  }
   ++physPin ;
   printf (" || %-2d", physPin) ;
 
@@ -282,82 +288,27 @@ static void readallPhys (int physPin)
 }
 
 
-void cmReadall (void)
-{
-  int pin ;
-
-  printf ("+-----+------+-------+      +-----+------+-------+\n") ;
-  printf ("| Pin | Mode | Value |      | Pin | Mode | Value |\n") ;
-  printf ("+-----+------+-------+      +-----+------+-------+\n") ;
-
-  for (pin = 0 ; pin < 28 ; ++pin)
-  {
-    printf ("| %3d ", pin) ;
-    printf ("| %-4s ", alts [getAlt (pin)]) ;
-    printf ("| %s  ", digitalRead (pin) == HIGH ? "High" : "Low ") ;
-    printf ("|      ") ;
-    printf ("| %3d ", pin + 28) ;
-    printf ("| %-4s ", alts [getAlt (pin + 28)]) ;
-    printf ("| %s  ", digitalRead (pin + 28) == HIGH ? "High" : "Low ") ;
-    printf ("|\n") ;
-  }
-
-  printf ("+-----+------+-------+      +-----+------+-------+\n") ;
-}
-
-
-
-
-
-/*
- * bPlusReadall:
- *	Read all the pins on the model B+
- *********************************************************************************
- */
-
-void bPlusReadall (void)
-{
-  int pin ;
-
-  printf (" +-----+-----+---------+------+---+--B Plus--+---+------+---------+-----+-----+\n") ;
-  printf (" | BCM | wPi |   Name  | Mode | V | Physical | V | Mode | Name    | wPi | BCM |\n") ;
-  printf (" +-----+-----+---------+------+---+----++----+---+------+---------+-----+-----+\n") ;
-  for (pin = 1 ; pin <= 40 ; pin += 2)
-    readallPhys (pin) ;
-  printf (" +-----+-----+---------+------+---+----++----+---+------+---------+-----+-----+\n") ;
-  printf (" | BCM | wPi |   Name  | Mode | V | Physical | V | Mode | Name    | wPi | BCM |\n") ;
-  printf (" +-----+-----+---------+------+---+--B Plus--+---+------+---------+-----+-----+\n") ;
-}
-
-//add for BananaPro by lemaker team
-void BPReadAll(void)
-{
-  int pin ;
-
-  printf (" +-----+-----+---------+------+---+--Banana Pro--+---+------+---------+-----+-----+\n") ;
-  printf (" | BCM | wPi |   Name  | Mode | V | Physical | V | Mode | Name    | wPi | BCM |\n") ;
-  printf (" +-----+-----+---------+------+---+----++----+---+------+---------+-----+-----+\n") ;
-  for (pin = 1 ; pin <= 40 ; pin += 2)
-    readallPhys (pin) ;
-  printf (" +-----+-----+---------+------+---+----++----+---+------+---------+-----+-----+\n") ;
-  printf (" | BCM | wPi |   Name  | Mode | V | Physical | V | Mode | Name    | wPi | BCM |\n") ;
-  printf (" +-----+-----+---------+------+---+--Banana Pro--+---+------+---------+-----+-----+\n") ;	
-}
-//end 2014.09.26
-
 //guenter 
 void NanoPiReadAll(void)
 {
   int pin ;
 
-  printf (" +-----+-----+----------+------+---+--NanoPI M1---+---+------+---------+-----+--+\n") ;
+  printf (" +-----+-----+----------+------+---+-NanoPI M1+---+------+----------+-----+-----+\n") ;
   printf (" | BCM | wPi |   Name   | Mode | V | Physical | V | Mode | Name     | wPi | BCM |\n") ;
   printf (" +-----+-----+----------+------+---+----++----+---+------+----------+-----+-----+\n") ;
   for (pin = 1 ; pin <= 40 ; pin += 2)
-    readallPhys (pin) ;
+    readallPhys (pin, 1) ;
   printf (" +-----+-----+----------+------+---+----++----+---+------+----------+-----+-----+\n") ;
   printf (" | BCM | wPi |   Name   | Mode | V | Physical | V | Mode | Name     | wPi | BCM |\n") ;
-  printf (" +-----+-----+----------+------+---+--NanoPI M1---+------+----------+-----+-----+\n") ;	
+  printf (" +-----+-----+----------+------+---+-NanoPI M1+---+------+----------+-----+-----+\n") ;	
+  printf ("\n");
+  printf (" +-----+----NanoPI M1 Debug UART---+----+\n") ;
+  printf (" | BCM | wPi |   Name   | Mode | V | Ph |\n") ;
+  printf (" +-----+-----+----------+------+---+----+\n") ;
+  for (pin = 41 ; pin < 45 ; pin++) {
+    readallPhys (pin, 0) ;
+  }
+  printf (" +-----+-----+----------+------+---+----+\n") ;
 }
 //guenter ende
 
