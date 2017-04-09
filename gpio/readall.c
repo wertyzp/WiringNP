@@ -184,28 +184,28 @@ static char *physNames [64] =
   NULL,
 
  "    3.3v", "5v      ",
- "   SDA.0", "5V      ",
+ "   SDA.0", "5v      ",
  "   SCL.0", "0v      ",
- "  GPIO.7", "TxD3    ",
- "      0v", "RxD3    ",
- "    RxD2", "GPIO.1  ",
- "    TxD2", "0v      ",
- "    CTS2", "GPIO.4  ",
- "    3.3v", "GPIO.5  ",
- "    MOSI", "0v      ",
- "    MISO", "RTS2    ",
- "    SCLK", "CE0     ",
- "      0v", "GPIO.11 ",
- "   SDA.1", "SCL.1   ",
- " GPIO.21", "0v      ",
- " GPIO.22", "RTS1    ",
- " GPIO.23", "0v      ",
- " GPIO.24", "CTS1    ",
- " GPIO.25", "TxD1    ",
+ "  GPIO.7", "TxD1    ",
  "      0v", "RxD1    ",
+ "    TxD2", "GPIO.1  ",
+ "    RTS2", "0v      ",
+ "    CTS2", "RTS1    ",
+ "    3.3v", "CTS1    ",
+ "    MOSI", "0v      ",
+ "    MISO", "RxD2    ",
+ "    SCLK", "SPI0_CS ",
+ "      0v", "SPDIFOUT",
+ "   SDA.1", "SCL.1   ",
+ "PCM0DOUT", "0v      ",
+ " PCM0DIN", "GPIO.26 ",
+ " GPIO.23", "0v      ",
+ "    CTS3", "TxD3    ",
+ " GPIO.25", "RTS3    ",
+ "      0v", "RxD3    ",
   
  "      0v", "      5v", 
- "  GPIO.4", "  GPIO.5",  
+ "    TxD0", "    RxD0",  
   
        NULL, NULL,
        NULL, NULL,
@@ -294,16 +294,16 @@ void NanoPiReadAll(void)
   int pin ;
 
   printf (" +-----+-----+----------+------+---+-NanoPI M1+---+------+----------+-----+-----+\n") ;
-  printf (" | BCM | wPi |   Name   | Mode | V | Physical | V | Mode | Name     | wPi | BCM |\n") ;
+  printf (" |  H3 | wPi |   Name   | Mode | V | Physical | V | Mode | Name     | wPi |  H3 |\n") ;
   printf (" +-----+-----+----------+------+---+----++----+---+------+----------+-----+-----+\n") ;
   for (pin = 1 ; pin <= 40 ; pin += 2)
     readallPhys (pin, 1) ;
   printf (" +-----+-----+----------+------+---+----++----+---+------+----------+-----+-----+\n") ;
-  printf (" | BCM | wPi |   Name   | Mode | V | Physical | V | Mode | Name     | wPi | BCM |\n") ;
+  printf (" |  H3 | wPi |   Name   | Mode | V | Physical | V | Mode | Name     | wPi |  H3 |\n") ;
   printf (" +-----+-----+----------+------+---+-NanoPI M1+---+------+----------+-----+-----+\n") ;	
   printf ("\n");
   printf (" +-----+----NanoPI M1 Debug UART---+----+\n") ;
-  printf (" | BCM | wPi |   Name   | Mode | V | Ph |\n") ;
+  printf (" |  H3 | wPi |   Name   | Mode | V | Ph |\n") ;
   printf (" +-----+-----+----------+------+---+----+\n") ;
   for (pin = 41 ; pin < 45 ; pin++) {
     readallPhys (pin, 0) ;
