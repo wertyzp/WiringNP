@@ -330,33 +330,41 @@ static int upDnConvert[3] = {7, 7, 5};
 
 
 static int pinToGpio [64] ={
-    0, 6, // 0, 1
-    2, 3, // 2, 3
-    200, 201, // 4  5
-    1, 203, // 6, 7
-    12, 11, // 8, 9
-    67, 17, //10,11
-    64, 65, //12,13
-    66, 198, //14,15
-    199, -1, //16,17
-    -1, -1, //18,19
-    -1, 20, //20,21
-    21, 8, //22,23
-    13, 9, //24,25
-    7, 16, //26,27
-    15, 14, //28,29
-    19, 18, //30,31
+    0,        //0
+ /* 24 Pin */
+   6, 2,   //1, 2
+   3, 200,   //3, 4
+   201, 1,   //5, 6
+    203, 12, //7, 8
+   11,  67, //9, 10
+    -1,  64,   //11, 12
+    65,  66,  //13, 14
+    198,  199,  //15, 16
+   4, 5,  //17, 18
+   -1, -1,   //19, 20
+    -1, 1,    //21, 22
+    -1, -1,   //23, 24
 
-    4, 5, // 32, 33 Debug UART pins
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // ... 47
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // ... 63
+    /* 12 Pin */
+    -1, -1,   //25, 26
+    -1, -1,   //27, 28
+    -1, -1,   //29, 30
+    -1, -1,   //31, 32
+    -1, -1,   //33, 34
+    -1, -1,   //35, 36
+
+    /* UART0 Tx,Rx */
+    -1, -1,     //37, 38
+
+    /* 39~63 */
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 };
 // guenter neu ende
 
 
-// nanopi m1 done
+/*
 static int pinTobcm [64] ={
-
     19, 18, //map to BCM GPIO0,1
     12, 11, //map to BCM GPIO2,3
     203, 20, //map to BCM GPIO4,5
@@ -376,6 +384,7 @@ static int pinTobcm [64] ={
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, //45... 60
     -1, -1, -1, -1 // ...63
 };
+*/
 
 // physToGpio:
 //	Take a physical pin (1 through 26) and re-map it to the BCM_GPIO pin
@@ -383,31 +392,37 @@ static int pinTobcm [64] ={
 //	Also add in the P5 connector, so the P5 pins are 3,4,5,6, so 53,54,55,56
 
 
-// nanopi m1 done
+// nanopi neo2 
 static int physToGpio [64] ={
-    -1, // 0
-    -1, -1, // 1, 2
-    12, -1, // 3, 4
-    11, -1, // 5, 6
-    203, 198, // 7, 8
-    -1, 199, // 9, 10
-    0, 6, //11, 12
-    2, -1, //13, 14
-    3, 200, //15, 16
-    -1, 201, //17, 18
-    64, -1, //19, 20
-    65, 1, //21, 22
-    66, 67, //23, 24
-    -1, 17, //25, 26
-    19, 18, //27, 28
-    20, -1, //29, 30
-    21, 7, //31, 32
-    8, -1, //33, 34
-    16, 13, //35, 36
-    9, 15, //37, 38
-    -1, 14, //39, 40
-    -1, -1, 4, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, //41-> 55
-    -1, -1, -1, -1, -1, -1, -1, -1 // 56-> 63
+    -1, 
+    /* 24 Pin */
+    -1, -1,   //1, 2
+    12, -1,   //3, 4
+    11, -1,   //5, 6
+    203, 198, //7, 8
+    -1,  199, //9, 10
+    0,   6,   //11, 12
+    2,   -1,  //13, 14
+    3,  200,  //15, 16
+    -1, 201,  //17, 18
+    64, -1,   //19, 20
+    65, 1,    //21, 22
+    66, 67,   //23, 24
+
+    /* 12 Pin */
+    -1, -1,   //25, 26
+    -1, -1,   //27, 28
+    -1, -1,   //29, 30
+    -1, -1,   //31, 32
+    -1, -1,   //33, 34
+    -1, -1,   //35, 36
+
+    /* UART0 Tx,Rx */
+    4, 5,     //37, 38
+
+    /* 39~63 */
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 };
 //
 
@@ -431,32 +446,32 @@ static int syspin [64] ={
 
 static int physToPin [64] = //return wiringPI pin
 {
-    -1, // 0
-    -1, -1, // 1, 2
-    8, -1, //3, 4
-    9, -1, //5, 6
-    7, 15, //7, 8
-    -1, 16, //9,10
-    0, 1, //11,12
-    2, -1, //13,14
-    3, 4, //15,16
-    -1, 5, //17,18
-    12, -1, //19,20
-    13, 6, //21,22
-    14, 10, //23, 24
-    -1, 11, // 25, 26
+  -1,        // 0
+  -1,  -1,   // 1, 2
+   8,  -1,   // 3, 4
+   9,  -1,   // 5, 6
+   7,  15,   // 7, 8
+  -1,  16,   // 9, 10
+   0,   1,   //11, 12
+   2,  -1,   //13, 14
+   3,   4,   //15, 16
+  -1,   5,   //17, 18
+  12,  -1,   //19, 20
+  13,   6,   //21, 22
+  14,  10,   //23, 24
 
-    30, 31, //27, 28
-    21, -1, //29, 30
-    22, 26, //31, 32
-    23, -1, //33, 34
-    24, 27, //35, 36
-    25, 28, //37, 38
-    -1, 29, //39, 40
-    // Padding:
+  -1,  -1,   //25, 26
+  -1,  -1,   //27, 28
+  -1,  -1,   //29, 30
+  -1,  -1,   //31, 32
+  -1,  -1,   //33, 34
+  -1,  -1,   //35, 36
 
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // ... 56
-    -1, -1, -1, -1, -1, -1, -1, // ... 63
+  17,  18,   //37, 38
+
+    /* 39~63 */
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 };
 
 // pins available on pin out by banks
@@ -661,7 +676,7 @@ int sunxi_get_gpio_mode(int pin) {
             printf("read reg val: 0x%x offset:%d  return: %d\n", regval, offset, reval);
         return reval;
     } else {
-        printf("line:%dpin number error\n", __LINE__);
+        printf("line:%d pin(=%d) number error\n", pin, __LINE__);
         return reval;
     }
 }
@@ -903,8 +918,8 @@ int isA20(void) {
 }
 /*end 2014.09.18*/
 
-/*add for H3 guenter*/
-int isH3(void) {
+/*add for NEO/NEO2 */
+int isNEO(void) {
     FILE *cpuFd;
     char line [120];
     char *d;
@@ -924,7 +939,7 @@ int isH3(void) {
     if (wiringPiDebug)
         printf("piboardRev: Hardware string: %s\n", line);
 
-    if (strstr(line, "sun8i") != NULL) //guenter von sun7i auf sun8i
+    if (strstr(line, "sun50i") != NULL || strstr(line, "sun8i") != NULL) 
     {
         if (wiringPiDebug)
             printf("Hardware:%s\n", line);
@@ -945,14 +960,14 @@ int isH3(void) {
 int piBoardRev(void) {
 
     /*add for orange pi guenter */
-    if (isH3()) //guenter if(isA20())
+    if (isNEO())
     {
         version = BPRVER;
         if (wiringPiDebug)
             printf("piboardRev:  %d\n", version);
         return BPRVER;
     } else {
-        piBoardRevOops("Is not H3 based board");
+        piBoardRevOops("Is not NanoPi NEO/NEO2 based board");
     }
     return 0;
 }
@@ -982,8 +997,13 @@ void piBoardId(int *model, int *rev, int *mem, int *maker, int *overVolted) {
 
     fclose(cpuFd);
 
-    if (strncmp(line, "Revision", 8) != 0)
-        piBoardRevOops("No \"Revision\" line");
+    if (strncmp (line, "Revision", 8) != 0){
+        if(isNEO()){
+            strcpy(line,"0000") ;
+        }else{
+            piBoardRevOops ("No \"Revision\" line") ;
+        }
+    }
 
     // Chomp trailing CR/NL
 
@@ -1088,7 +1108,8 @@ int getAlt(int pin) {
     else if (wiringPiMode == WPI_MODE_PHYS)
         pin = physToGpio[pin];
     else if (wiringPiMode == WPI_MODE_GPIO)
-        pin = pinTobcm[pin]; //need map A20 to bcm
+        //pin = pinTobcm[pin]; 
+        pin = pin;
     else return 0;
 
     if (-1 == pin) {
@@ -1261,16 +1282,36 @@ void pinMode(int pin, int mode) {
     struct wiringPiNodeStruct *node = wiringPiNodes;
 
     if (wiringPiDebug)
-        printf("%s,%d,pin:%d,mode:%d\n", __func__, __LINE__, pin, mode);
+        printf("Func: %s, Line: %d,pin:%d,mode:%d\n", __func__, __LINE__, pin, mode);
     if ((pin & PI_GPIO_MASK) == 0) // On-board pin
     {
-        if (wiringPiMode == WPI_MODE_PINS)
-            pin = pinToGpio [pin];
-        else if (wiringPiMode == WPI_MODE_PHYS)
+        if (wiringPiDebug) {
+            printf("");
+        }
+        if (wiringPiMode == WPI_MODE_PINS) {
+		pin = pinToGpio [pin];
+		if (wiringPiDebug) {
+			printf(">>> pinToGpio[pin] ret %d\n", pin);
+		}
+        } else if (wiringPiMode == WPI_MODE_PHYS) {
             pin = physToGpio[pin];
-        else if (wiringPiMode == WPI_MODE_GPIO)
-            pin = pinTobcm[pin]; //need map A20 to bcm
-        else return;
+                if (wiringPiDebug) {
+                        printf(">>> physToGpio[pin] ret %d\n", pin);
+                }
+        } else if (wiringPiMode == WPI_MODE_GPIO) {
+                // pin = pinTobcm[pin]; 
+                pin = pin;
+
+                if (wiringPiDebug) {
+                        printf(">>> pinTobcm[pin] ret %d\n", pin);
+                }
+
+	} else {
+		if (wiringPiDebug) {
+			printf(">>> unknow wiringPiMode\n");
+		}
+              return;
+        }
 
         if (-1 == pin) /*VCC or GND return directly*/ {
             //printf("[%s:L%d] the pin:%d is invaild,please check it over!\n", __func__,  __LINE__, pin);
@@ -1328,7 +1369,8 @@ void pullUpDnControl(int pin, int pud) {
         else if (wiringPiMode == WPI_MODE_PHYS)
             pin = physToGpio[pin];
         else if (wiringPiMode == WPI_MODE_GPIO)
-            pin = pinTobcm[pin]; //need map A20 to bcm
+            // pin = pinTobcm[pin]; 
+            pin = pin;
         else return;
         if (wiringPiDebug)
             printf("%s,%d,pin:%d\n", __func__, __LINE__, pin);
@@ -1359,43 +1401,60 @@ void pullUpDnControl(int pin, int pud) {
 int digitalRead(int pin) {
     char c;
     struct wiringPiNodeStruct *node = wiringPiNodes;
+    int oldPin = pin;
 
     if ((pin & PI_GPIO_MASK) == 0) // On-Board Pin
     {
-        if (wiringPiMode == WPI_MODE_GPIO_SYS) // Sys mode
-        {
+	    if (wiringPiMode == WPI_MODE_GPIO_SYS) // Sys mode
+	    {
+		    if (wiringPiDebug) {
+			    printf("in digitalRead, wiringPiMode == WPI_MODE_GPIO_SYS\n");
+		    }
 
-            if (pin == 0) {
-                //printf("%d %s,%d invalid pin,please check it over.\n",pin,__func__, __LINE__);
-                return 0;
-            }
-            if (syspin[pin] == -1) {
-                //printf("%d %s,%d invalid pin,please check it over.\n",pin,__func__, __LINE__);
-                return 0;
-            }
-            if (sysFds [pin] == -1) {
-                if (wiringPiDebug)
-                    printf("pin %d sysFds -1.%s,%d\n", pin, __func__, __LINE__);
-                return LOW;
-            }
-            if (wiringPiDebug)
-                printf("pin %d :%d.%s,%d\n", pin, sysFds [pin], __func__, __LINE__);
-            lseek(sysFds [pin], 0L, SEEK_SET);
-            read(sysFds [pin], &c, 1);
-            return (c == '0') ? LOW : HIGH;
-        } else if (wiringPiMode == WPI_MODE_PINS)
-            pin = pinToGpio [pin];
-        else if (wiringPiMode == WPI_MODE_PHYS)
-            pin = physToGpio[pin];
-        else if (wiringPiMode == WPI_MODE_GPIO)
-            pin = pinTobcm[pin]; //need map A20 to bcm
-        else
-            return LOW;
-        if (-1 == pin) {
-            printf("[%s:L%d] the pin:%d is invaild,please check it over!\n", __func__, __LINE__, pin);
-            return LOW;
-        }
-        return sunxi_digitalRead(pin);
+		    if (pin == 0) {
+			    //printf("%d %s,%d invalid pin,please check it over.\n",pin,__func__, __LINE__);
+			    return 0;
+		    }
+		    if (syspin[pin] == -1) {
+			    //printf("%d %s,%d invalid pin,please check it over.\n",pin,__func__, __LINE__);
+			    return 0;
+		    }
+		    if (sysFds [pin] == -1) {
+			    if (wiringPiDebug)
+				    printf("pin %d sysFds -1.%s,%d\n", pin, __func__, __LINE__);
+			    return LOW;
+		    }
+		    if (wiringPiDebug)
+			    printf("pin %d :%d.%s,%d\n", pin, sysFds [pin], __func__, __LINE__);
+		    lseek(sysFds [pin], 0L, SEEK_SET);
+		    read(sysFds [pin], &c, 1);
+		    return (c == '0') ? LOW : HIGH;
+	    } else if (wiringPiMode == WPI_MODE_PINS) {
+		    pin = pinToGpio [pin];
+		    if (wiringPiDebug) {
+			    printf(">>> pinToGpio[pin] ret %d\n", pin);
+		    }
+	    } else if (wiringPiMode == WPI_MODE_PHYS) {
+		    pin = physToGpio[pin];
+		    if (wiringPiDebug) {
+			    printf(">>> physToGpio[pin] ret %d\n", pin);
+		    }
+	    } else if (wiringPiMode == WPI_MODE_GPIO) {
+		    // pin = pinTobcm[pin]; 
+                    pin = pin;
+
+		    if (wiringPiDebug) {
+			    printf(">>> pinTobcm[pin] ret %d\n", pin);
+		    }
+
+	    } else {
+		    return LOW;
+	    }
+	    if (-1 == pin) {
+		    printf("[%s:L%d] the pin:%d is invaild,please check it over!\n", __func__, __LINE__, oldPin);
+		    return LOW;
+	    }
+	    return sunxi_digitalRead(pin);
     } else {
         if ((node = wiringPiFindNode(pin)) == NULL)
             return LOW;
@@ -1449,7 +1508,8 @@ void digitalWrite(int pin, int value) {
         else if (wiringPiMode == WPI_MODE_PHYS)
             pin = physToGpio[pin];
         else if (wiringPiMode == WPI_MODE_GPIO)
-            pin = pinTobcm[pin]; //need map A20 to bcm
+            // pin = pinTobcm[pin];
+            pin = pin;
         else return;
         if (-1 == pin) {
             //printf("[%s:L%d] the pin:%d is invaild,please check it over!\n", __func__,  __LINE__, pin);
@@ -1487,7 +1547,8 @@ void pwmWrite(int pin, int value) {
         else if (wiringPiMode == WPI_MODE_PHYS) {
             pin = physToGpio[pin];
         } else if (wiringPiMode == WPI_MODE_GPIO)
-            pin = pinTobcm[pin]; //need map A20 to bcm
+            // pin = pinTobcm[pin];
+            pin = pin;
         else
             return;
         if (-1 == pin) {

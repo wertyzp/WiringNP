@@ -80,40 +80,6 @@ static char *alts [] =
   "IN", "OUT", "ALT5", "ALT4", "ALT0", "ALT1", "ALT2", "OFF"
 } ;
 
-/* guenter static int physToWpi [64] = 
-{
-  -1,           // 0
-  -1, -1,       // 1, 2
-   8, -1,
-   9, -1,
-   7, 15,
-  -1, 16,
-   0,  1,
-   2, -1,
-   3,  4,
-  -1,  5,
-  12, -1,
-  13,  6,
-  14, 10,
-  -1, 11,       // 25, 26
-  30, 31,	// Actually I2C, but not used
-  21, -1,
-  22, 26,
-  23, -1,
-  24, 27,
-  25, 28,
-  -1, 29,
-  -1, -1,
-  -1, -1,
-  -1, -1,
-  -1, -1,
-  -1, -1,
-  -1, -1,
-  -1, -1,
-  -1, -1, -1, -1, -1, -1, -1, -1, -1
-} ; 
-guenter ende */
-
 // guenter anfang
 static int physToWpi [64] =
 {
@@ -130,89 +96,64 @@ static int physToWpi [64] =
   12,  -1,   //19, 20
   13,   6,   //21, 22
   14,  10,   //23, 24
-  -1,  11,   //25, 26
-  30,  31,   //27, 28
-  21,  -1,   //29, 30
-  22,  26,   //31, 32
-  23,  -1,   //33, 34
-  24,  27,   //35, 36
-  25,  28,   //37, 38
-  -1,  29,   //39, 40
-   -1, -1, 32, 33, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, //41-> 55
-   -1, -1, -1, -1, -1, -1, -1, -1 // 56-> 63
+
+  -1,  -1,   //25, 26
+  -1,  -1,   //27, 28
+  -1,  -1,   //29, 30
+  -1,  -1,   //31, 32
+  -1,  -1,   //33, 34
+  -1,  -1,   //35, 36
+
+  17,  18,   //37, 38
+
+    /* 39~63 */
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 } ;
 //guenter ende
-
-
-/* guenter static char *physNames [64] = 
-{
-  NULL,
-
-  "   3.3v", "5v     ",
-  "  SDA.1", "5V     ",
-  "  SCL.1", "0v     ",
-  "GPIO. 7", "TxD    ",
-  "     0v", "RxD    ",
-  "GPIO. 0", "GPIO. 1",
-  "GPIO. 2", "0v     ",
-  "GPIO. 3", "GPIO. 4",
-  "   3.3v", "GPIO. 5",
-  "   MOSI", "0v     ",
-  "   MISO", "GPIO. 6",
-  "   SCLK", "CE0    ",
-  "     0v", "CE1    ",
-  "  SDA.0", "SCL.0  ",
-  "GPIO.21", "0v     ",
-  "GPIO.22", "GPIO.26",
-  "GPIO.23", "0v     ",
-  "GPIO.24", "GPIO.27",
-  "GPIO.25", "GPIO.28",
-  "     0v", "GPIO.29",
-       NULL, NULL,
-       NULL, NULL,
-       NULL, NULL,
-       NULL, NULL,
-       NULL, NULL,
-  "GPIO.17", "GPIO.18",
-  "GPIO.19", "GPIO.20",
-   NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
-} ;	guenter ende */
 
 //guenter orange pi
 static char *physNames [64] = 
 {
   NULL,
+/* 24 Pin */
+ "    3.3V", "5V      ",
+ " GPIOA12", "5V      ",
+ " GPIOA11", "0v      ",
+ " GPIOG11", "GPIOG6  ",
+ "      0v", "GPIOG7  ",
+ "  GPIOA0", "GPIOA6  ",
+ "  GPIOA2", "0v      ",
+ "  GPIOA3", "GPIOG8  ",
+ "    3.3v", "GPIOG9  ",
+ "  GPIOC0", "0v      ",
+ "  GPIOC1", "GPIOA1  ",
+ "  GPIOC2", "GPIOC3  ",
 
- "    3.3v", "5v      ",
- "   SDA.0", "5V      ",
- "   SCL.0", "0v      ",
- "  GPIO.7", "TxD3    ",
- "      0v", "RxD3    ",
- "    RxD2", "GPIO.1  ",
- "    TxD2", "0v      ",
- "    CTS2", "GPIO.4  ",
- "    3.3v", "GPIO.5  ",
- "    MOSI", "0v      ",
- "    MISO", "RTS2    ",
- "    SCLK", "CE0     ",
- "      0v", "GPIO.11 ",
- "   SDA.1", "SCL.1   ",
- " GPIO.21", "0v      ",
- " GPIO.22", "RTS1    ",
- " GPIO.23", "0v      ",
- " GPIO.24", "CTS1    ",
- " GPIO.25", "TxD1    ",
- "      0v", "RxD1    ",
-  
- "      0v", "      5v", 
- "  GPIO.4", "  GPIO.5",  
-  
+/* 12 Pin */
        NULL, NULL,
        NULL, NULL,
        NULL, NULL,
-  "GPIO.17", "GPIO.18",
-  "GPIO.19", "GPIO.20",
-   NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,
+
+/* UART0, tx, rx */
+ "  GPIOA4", "  GPIOA5", 
+
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,
+       NULL
 } ;
 // guenter ende
 
@@ -239,15 +180,19 @@ static void readallPhys (int physPin, int pair)
     printf (" |      |  ") ;
   else
   {
-    /**/ if (wpMode == WPI_MODE_GPIO)
-      pin = physPinToGpio (physPin) ;
-    else if (wpMode == WPI_MODE_PHYS)
-      pin = physPin ;
-    else
-      pin = physToWpi [physPin] ;
+   if (wpMode == WPI_MODE_GPIO) {
+       // printf("#### WPI_MODE_GPIO\n");
+       pin = physPinToGpio (physPin) ;
+   } else if (wpMode == WPI_MODE_PHYS) {
+       // printf("#### WPI_MODE_PHYS\n");
+       pin = physPin ;
+    } else {
+       // printf("#### Unknow Mode, physPin=%d, physToWpi [physPin] =%d\n", physPin, physToWpi [physPin]);
+       pin = physToWpi [physPin] ;
+    }
 
-    printf (" | %4s", alts [getAlt (pin)]) ;
-    printf (" | %d", digitalRead (pin)) ;
+     printf (" | %4s", alts [getAlt (pin)]) ;
+     printf (" | %d", digitalRead (pin)) ;
   }
 
 // Pin numbers:
@@ -257,21 +202,27 @@ static void readallPhys (int physPin, int pair)
       printf (" |\n") ;
       return;
   }
+
+
   ++physPin ;
+
   printf (" || %-2d", physPin) ;
 
 // Same, reversed
-
   if (physToWpi [physPin] == -1)
     printf (" |   |     ") ;
   else
   {
-    /**/ if (wpMode == WPI_MODE_GPIO)
-      pin = physPinToGpio (physPin) ;
-    else if (wpMode == WPI_MODE_PHYS)
-      pin = physPin ;
-    else
-      pin = physToWpi [physPin] ;
+   if (wpMode == WPI_MODE_GPIO) {
+       // printf("#### WPI_MODE_GPIO\n");
+       pin = physPinToGpio (physPin) ;
+   } else if (wpMode == WPI_MODE_PHYS) {
+       // printf("#### WPI_MODE_PHYS\n");
+       pin = physPin ;
+    } else {
+       // printf("#### Unknow Mode, physPin=%d, physToWpi [physPin] =%d\n", physPin, physToWpi [physPin]);
+       pin = physToWpi [physPin] ;
+    }
 
     printf (" | %d", digitalRead (pin)) ;
     printf (" | %-4s", alts [getAlt (pin)]) ;
@@ -279,7 +230,7 @@ static void readallPhys (int physPin, int pair)
 
   printf (" | %-5s", physNames [physPin]) ;
 
-  if (physToWpi     [physPin] == -1)
+  if (physToWpi[physPin] == -1)
     printf (" |     |    ") ;
   else
     printf (" | %-3d | %-3d", physToWpi [physPin], physPinToGpio (physPin)) ;
@@ -293,19 +244,20 @@ void NanoPiReadAll(void)
 {
   int pin ;
 
-  printf (" +-----+-----+----------+------+---+-NanoPI M1+---+------+----------+-----+-----+\n") ;
+  printf (" +-----+-----+----------+------+---+-NanoPi NEO/NEO2--+------+----------+-----+-----+\n") ;
   printf (" | BCM | wPi |   Name   | Mode | V | Physical | V | Mode | Name     | wPi | BCM |\n") ;
   printf (" +-----+-----+----------+------+---+----++----+---+------+----------+-----+-----+\n") ;
-  for (pin = 1 ; pin <= 40 ; pin += 2)
+  for (pin = 1 ; pin <= 24 ; pin += 2)
     readallPhys (pin, 1) ;
   printf (" +-----+-----+----------+------+---+----++----+---+------+----------+-----+-----+\n") ;
   printf (" | BCM | wPi |   Name   | Mode | V | Physical | V | Mode | Name     | wPi | BCM |\n") ;
-  printf (" +-----+-----+----------+------+---+-NanoPI M1+---+------+----------+-----+-----+\n") ;	
+  printf (" +-----+-----+----------+------+---+-NanoPi NEO/NEO2--+------+----------+-----+-----+\n") ;	
   printf ("\n");
-  printf (" +-----+----NanoPI M1 Debug UART---+----+\n") ;
+
+  printf (" +-----+----NanoPi NEO/NEO2 Debug UART-+----+\n") ;
   printf (" | BCM | wPi |   Name   | Mode | V | Ph |\n") ;
   printf (" +-----+-----+----------+------+---+----+\n") ;
-  for (pin = 41 ; pin < 45 ; pin++) {
+  for (pin = 37 ; pin <= 38 ; pin++) {
     readallPhys (pin, 0) ;
   }
   printf (" +-----+-----+----------+------+---+----+\n") ;
