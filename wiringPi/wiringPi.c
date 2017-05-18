@@ -534,8 +534,10 @@ const char * int2bin(uint32_t param) {
 void print_pwm_reg() {
     uint32_t val = readl(SUNXI_PWM_CTRL_REG);
     uint32_t val2 = readl(SUNXI_PWM_CH0_PERIOD);
-    printf("SUNXI_PWM_CTRL_REG: %s\n", int2bin(val));
-    printf("SUNXI_PWM_CH0_PERIOD: %s\n", int2bin(val2));
+    if (wiringPiDebug) {
+        printf("SUNXI_PWM_CTRL_REG: %s\n", int2bin(val));
+        printf("SUNXI_PWM_CH0_PERIOD: %s\n", int2bin(val2));
+    }
 }
 
 void sunxi_pwm_set_enable(int en) {
@@ -598,7 +600,9 @@ void sunxi_pwm_set_clk(int clk) {
 uint32_t sunxi_pwm_get_period(void) {
     uint32_t period_cys = 0;
     period_cys = readl(SUNXI_PWM_CH0_PERIOD); //get ch1 period_cys
-    printf("periodcys: %d\n", period_cys);
+    if (wiringPiDebug) {
+        printf("periodcys: %d\n", period_cys);
+    }
     period_cys &= 0xffff0000; //get period_cys
     period_cys = period_cys >> 16;
     if (wiringPiDebug)
@@ -1285,9 +1289,6 @@ void pinMode(int pin, int mode) {
         printf("Func: %s, Line: %d,pin:%d,mode:%d\n", __func__, __LINE__, pin, mode);
     if ((pin & PI_GPIO_MASK) == 0) // On-board pin
     {
-        if (wiringPiDebug) {
-            printf("");
-        }
         if (wiringPiMode == WPI_MODE_PINS) {
 		pin = pinToGpio [pin];
 		if (wiringPiDebug) {
