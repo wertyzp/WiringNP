@@ -1,7 +1,7 @@
 # WiringNP
 This is a GPIO access library for NanoPi. It is based on the WiringOP for Orange PI which is based on original WiringPi for Raspberry Pi.
 
-Currently supported boards:
+Currently supported boards:  
 NanoPI Neo  
 NanoPi NEO2  
 NanoPI M1  
