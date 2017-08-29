@@ -47,7 +47,7 @@ SRC	=	wiringPi.c						\
 		wiringSerial.c wiringShift.c				\
 		piHiPri.c piThread.c					\
 		wiringPiSPI.c wiringPiI2C.c				\
-		softPwm.c softTone.c softServo.c					\
+		softPwm.c softTone.c softServo.c			\
 		mcp23008.c mcp23016.c mcp23017.c			\
 		mcp23s08.c mcp23s17.c					\
 		sr595.c							\
@@ -55,7 +55,8 @@ SRC	=	wiringPi.c						\
 		mcp3002.c mcp3004.c mcp4802.c mcp3422.c			\
 		max31855.c max5322.c					\
 		sn3218.c						\
-		drcSerial.c
+		drcSerial.c						\
+		boardtype_friendlyelec.c
 
 OBJ	=	$(SRC:.c=.o)
 
@@ -116,6 +117,7 @@ install-headers:
 	@install -m 0644 pcf8574.h		$(DESTDIR)$(PREFIX)/include
 	@install -m 0644 pcf8591.h		$(DESTDIR)$(PREFIX)/include
 	@install -m 0644 sn3218.h		$(DESTDIR)$(PREFIX)/include
+	@install -m 0644 boardtype_friendlyelec.h	$(DESTDIR)$(PREFIX)/include
 
 .PHONEY:	install
 install:	$(DYNAMIC) install-headers
@@ -135,6 +137,7 @@ install-static:	$(STATIC) install-headers
 uninstall:
 	@echo "[UnInstall]"
 	@rm -f $(DESTDIR)$(PREFIX)/include/wiringPi.h
+	@rm -f $(DESTDIR)$(PREFIX)/include/boardtype_friendlyelec.h
 	@rm -f $(DESTDIR)$(PREFIX)/include/wiringSerial.h
 	@rm -f $(DESTDIR)$(PREFIX)/include/wiringShift.h
 	@rm -f $(DESTDIR)$(PREFIX)/include/softPwm.h
@@ -169,6 +172,7 @@ depend:
 # DO NOT DELETE
 
 wiringPi.o: softPwm.h softTone.h wiringPi.h
+boardtype_friendlyelec.o: boardtype_friendlyelec.h
 wiringSerial.o: wiringSerial.h
 wiringShift.o: wiringPi.h wiringShift.h
 piHiPri.o: wiringPi.h

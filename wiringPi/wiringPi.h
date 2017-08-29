@@ -72,7 +72,6 @@
 //	Intended for the GPIO program Use at your own risk.
 
 #define PI_MODEL_UNKNOWN 0
-#define	PI_MODEL_M1	1
 
 #define	PI_VERSION_UNKNOWN	0
 #define	PI_VERSION_1		1
@@ -84,17 +83,12 @@
 #define	PI_MAKER_EGOMAN		1
 #define	PI_MAKER_SONY		2
 #define	PI_MAKER_QISDA		3
-#define   PI_MAKER_LEMAKER  4  //add for BananaPro by LeMaker team
+#define PI_MAKER_LEMAKER  4     //add for BananaPro by LeMaker team
+#define PI_MAKER_FRIENDLYELEC 5 //add for FriendlyELEC team 
 
 #define BPRVER 3  //add for BananaPro by lemaker team
 
-extern const char *piModelNames    [6] ;
-extern const char *piRevisionNames [5] ;
-extern const char *piMakerNames    [5] ;
-
-
 //	Intended for the GPIO program Use at your own risk.
-
 // Threads
 
 #define	PI_THREAD(X)	void *X (void *dummy)
@@ -148,11 +142,7 @@ extern "C" {
 
 // Data
 
-//extern const char *piModelNames [] ;
-//extern const char *piRevisionNames[] ;
-
 // Internal
-
 extern int wiringPiFailure (int fatal, const char *message, ...) ;
 
 // Core wiringPi functions
@@ -218,6 +208,8 @@ extern void         delay             (unsigned int howLong) ;
 extern void         delayMicroseconds (unsigned int howLong) ;
 extern unsigned int millis            (void) ;
 extern unsigned int micros            (void) ;
+
+#include "boardtype_friendlyelec.h"
 
 #ifdef __cplusplus
 }

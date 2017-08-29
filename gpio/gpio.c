@@ -1084,7 +1084,6 @@ static void doPwmClock (int argc, char *argv [])
 int main (int argc, char *argv [])
 {
   int i ;
-  int model, rev, mem, maker, overVolted ;
 
   if (getenv ("WIRINGPI_DEBUG") != NULL)
   {
@@ -1129,19 +1128,28 @@ int main (int argc, char *argv [])
     printf ("This is free software with ABSOLUTELY NO WARRANTY.\n") ;
     printf ("For details type: %s -warranty\n", argv [0]) ;
     printf ("\n") ;
-    piBoardId (&model, &rev, &mem, &maker, &overVolted) ;
-    if (model == PI_MODEL_UNKNOWN)
-    {
-      printf ("Your Raspberry Pi has an unknown model type. Please report this to\n") ;
-      printf ("    projects@drogon.net\n") ;
+
+    BoardHardwareInfo* retBoardInfo;
+    int boardId;
+    boardId = getBoardType(&retBoardInfo);
+    if (boardId >= 0) {
+
+      if (boardId > ALLWINNER_BASE && boardId <= ALLWINNER_MAX 
+		&& boardId != NanoPi_A64
+		&& boardId != NanoPi_NEO_Core) {
+        printf ("NanoPi Details:\n") ;
+        printf ("  Type: %s, Revision: %d, Maker: FriednlyELEC\n\n", 
+          retBoardInfo->boardDisplayName, retBoardInfo->kernelRevision) ;
+      } else {
+        printf ("This NanoPi model is currently not supported. ") ;
+      }
+
+    } else {
+      printf ("Your NanoPi has an unknown model type. Please report this to\n") ;
+      printf ("    support@friendlyarm.com\n") ;
       printf ("with a copy of your /proc/cpuinfo if possible\n") ;
     }
-    else
-    {
-      printf ("Banana Pro Details:\n") ;
-      printf ("  Type: %s, Revision: %s, Memory: %dMB, Maker: %s %s\n", 
-	  piModelNames [model], piRevisionNames [rev], mem, piMakerNames [maker], overVolted ? "[OV]" : "") ;
-    }
+
     return 0 ;
   }
 

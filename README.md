@@ -2,27 +2,21 @@
 This is a GPIO access library for NanoPi. It is based on the WiringOP for Orange PI which is based on original WiringPi for Raspberry Pi.
 
 Currently supported boards:  
-NanoPI Neo  
+NanoPi Neo  
+NanoPi Neo Air
+NanoPi Duo
 NanoPi NEO2  
-NanoPI M1  
+NanoPi NEO Plus2
+NanoPi M1  
+NanoPi M1 Plus
 
 # Installation
 
-## Install WiringNP on NEO/NEO2
+## Install WiringNP 
 Log into your nano board via SSH, open a terminal and install the WiringNP library by running the following commands:
 ```
 git clone https://github.com/friendlyarm/WiringNP
 cd WiringNP/
-chmod 755 build
-./build
-```
-
-## Install WiringNP on NanoPi M1
-Log into your nano board via SSH, open a terminal and install the WiringNP library by running the following commands:
-```
-git clone https://github.com/friendlyarm/WiringNP
-cd WiringNP/
-git checkout nanopi-m1
 chmod 755 build
 ./build
 ```
