@@ -26,8 +26,8 @@ BoardHardwareInfo gAllBoardHardwareInfo[] = {
 
 	//s5p6818
 	{"nanopi3", 1, NanoPC_T3, "NanoPC-T3",""},
-	{"nanopi3", 2, NanoPi_S3, "NanoPi-S3",""},
-	{"nanopi3", 3, Smart6818, "Smart6818",""},
+	{"nanopi3", 4, NanoPC_T3T, "NanoPC-T3T",""},
+	{"nanopi3", 5, NanoPi_Fire3, "NanoPi-Fire3",""},
 	{"nanopi3", 7, NanoPi_M3, "NanoPi-M3",""},
 
 	//allwinner h3
@@ -36,8 +36,9 @@ BoardHardwareInfo gAllBoardHardwareInfo[] = {
 	{"sun8i", 0, NanoPi_NEO, "NanoPi-NEO", "1(0)"},
 	{"sun8i", 0, NanoPi_NEO_Air, "NanoPi-NEO-Air", "2(0)"},
 	{"sun8i", 0, NanoPi_M1_Plus, "NanoPi-M1-Plus", "3(0)"},
-    {"sun8i", 0, NanoPi_Duo, "NanoPi-Duo", "4(0)"},
-    {"sun8i", 0, NanoPi_NEO_Core, "NanoPi-NEO-Core", "5(0)"},
+        {"sun8i", 0, NanoPi_Duo, "NanoPi-Duo", "4(0)"},
+        {"sun8i", 0, NanoPi_NEO_Core, "NanoPi-NEO-Core", "5(0)"},
+        {"sun8i", 0, NanoPi_K1, "NanoPi-K1", "6(0)"},
         // kernel 4.x
 	{"Allwinnersun8iFamily", 0, NanoPi_M1, "NanoPi-M1", "0(0)"},
         {"Allwinnersun8iFamily", 0, NanoPi_NEO, "NanoPi-NEO", "1(0)"},
@@ -45,6 +46,7 @@ BoardHardwareInfo gAllBoardHardwareInfo[] = {
         {"Allwinnersun8iFamily", 0, NanoPi_M1_Plus, "NanoPi-M1-Plus", "3(0)"},
         {"Allwinnersun8iFamily", 0, NanoPi_Duo, "NanoPi-Duo", "4(0)"},
         {"Allwinnersun8iFamily", 0, NanoPi_NEO_Core, "NanoPi-NEO-Core", "5(0)"},
+        {"Allwinnersun8iFamily", 0, NanoPi_K1, "NanoPi-K1", "6(0)"},
 
 
 	// a64
@@ -55,10 +57,15 @@ BoardHardwareInfo gAllBoardHardwareInfo[] = {
 	{"sun50iw2", 4, NanoPi_NEO2, "NanoPi-NEO2", "1(0)"},
 	{"sun50iw2", 4, NanoPi_M1_Plus2, "NanoPi-M1-Plus2", "3(0)"}, 
     {"sun50iw2", 4, NanoPi_NEO_Plus2, "NanoPi-NEO-Plus2", "2(0)"},
+    {"sun50iw2", 4, NanoPi_NEO_Core2, "NanoPi-NEO-Core2", "0(0)"},
+    {"sun50iw2", 4, NanoPi_K1_Plus, "NanoPi-K1-Plus", "4(0)"},
+
 	// kernel 4.x
 	{"Allwinnersun50iw2Family", 4, NanoPi_NEO2, "NanoPi-NEO2", "1(0)"},
 	{"Allwinnersun50iw2Family", 4, NanoPi_M1_Plus2, "NanoPi-M1-Plus2", "3(0)"},
     {"Allwinnersun50iw2Family", 4, NanoPi_NEO_Plus2, "NanoPi-NEO-Plus2", "2(0)"},
+    {"Allwinnersun50iw2Family", 4, NanoPi_NEO_Core2, "NanoPi-NEO-Core2", "0(0)"},
+    {"Allwinnersun50iw2Family", 4, NanoPi_K1_Plus, "NanoPi-K1-Plus", "4(0)"},
 
 	//k2
 	{"Amlogic", 0, NanoPi_K2, "NanoPi-K2", ""},
@@ -67,14 +74,16 @@ BoardHardwareInfo gAllBoardHardwareInfo[] = {
 static int getFieldValueInCpuInfo(char* hardware, int hardwareMaxLen, char* revision, int revisionMaxLen )
 {
 	int n,i,j;
-	char lineUntrim[1024], line[1024],*p,*p2;
+	char lineUntrim[1024], line[1024],line2[1024],*p,*p2;
 	FILE *f;
 	int isGotHardware = 0;
 	int isGotRevision = 0;
 
-	if (!(f = fopen("/proc/cpuinfo", "r"))) {
-		LOGE("open /proc/cpuinfo failed.");
-		return -1;
+	if (!(f = fopen("/sys/devices/platform/board/info", "r"))) {
+		if (!(f = fopen("/proc/cpuinfo", "r"))) {
+			LOGE("open /proc/cpuinfo failed.");
+			return -1;
+		}
 	}
 
 	while (!feof(f)) {
@@ -92,41 +101,31 @@ static int getFieldValueInCpuInfo(char* hardware, int hardwareMaxLen, char* revi
 			n = strlen(line);
 			if (n>0) {
 				//LOGD("LINE: %s\n", line);
+				#define GetKeyValue(isGot,valP,keyName,buff,buffLen) \
+				if (isGot==0) { \
+					strcpy(line2, line); \
+					if (valP=strtok(line2, ":")) { \
+						if (strncasecmp(valP,keyName,strlen(keyName))==0) { \
+							if (valP=strtok(0, ":")) { \
+								memset(buff,0,buffLen); \
+								strncpy(buff,valP,buffLen-1); \
+								isGot=1; \
+							} \
+							continue; \
+						} \
+					} \
+				}
+				GetKeyValue(isGotHardware,p,"Hardware",hardware,hardwareMaxLen);
+				GetKeyValue(isGotRevision,p2,"Revision",revision,revisionMaxLen);
 
-                if (isGotHardware == 0) {
-                    if (p = strtok(line, ":")) {
-                        if (strncasecmp(p, "Hardware", strlen("Hardware")) == 0) {
-                            if (p = strtok(0, ":")) {
-                                memset(hardware,0,hardwareMaxLen);
-                                strncpy(hardware, p, hardwareMaxLen-1);
-                                isGotHardware = 1;
-                            }
-                            continue;
-                        }
-                    }  
-                }
-
-                if (isGotRevision == 0) {
-                    if (p2 = strtok(line, ":")) {
-                        if (strncasecmp(p2, "Revision", strlen("Revision")) == 0) {
-                            if (p2 = strtok(0, ":")) {
-                                memset(revision,0,revisionMaxLen);
-                                strncpy(revision, p2, revisionMaxLen-1);
-                                isGotRevision = 1;
-                            }
-                            continue;
-                        }
-                    } 
-                }
-
-                if (isGotHardware == 1 && isGotRevision == 1) {
-                    break;
-                }
-            }
-        }
-    }
-    fclose(f);
-    return isGotHardware + isGotRevision;
+				if (isGotHardware == 1 && isGotRevision == 1) {
+					break;
+				}
+			}
+		}
+	}
+	fclose(f);
+	return isGotHardware + isGotRevision;
 }
 
 
@@ -139,7 +138,7 @@ static int getAllwinnerBoardID(char* boardId, int boardIdMaxLen )
 	int ret = -1;
 
 	if (!(f = fopen("/sys/class/sunxi_info/sys_info", "r"))) {
-		LOGE("open /proc/cpuinfo failed.");
+		LOGE("open /sys/class/sunxi_info/sys_info failed.");
 		return -1;
 	}
 
