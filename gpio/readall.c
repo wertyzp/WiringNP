@@ -42,6 +42,8 @@ extern int wpMode ;
 #  define       FALSE   (1==2)
 #endif
 
+#define DEBUG_READALL 0
+
 /*
  * doReadallExternal:
  *	A relatively crude way to read the pins on an external device.
@@ -252,7 +254,7 @@ static int physToWpi_duo [MAX_PIN_COUNT] =
    0,  -1,   //17, 18
    2,  -1,   //19, 20
    3,  16,   //21, 22
-  12,  -1,   //23, 24
+  12,  18,   //23, 24
 
   13,  -1,   //25, 26
   -1,  -1,   //27, 28
@@ -287,13 +289,98 @@ static char *physNames_duo [MAX_PIN_COUNT] =
  " GPIOA16", "USB-DP3 ",
  " GPIOA14", "USB-DM3 ",
  " GPIOA13", "GPIOG11 ",
- " GPIOA12", "IR-RX   ",
+ " GPIOA12", "GPIOL11 ",
  " GPIOA11", "0v      ",  //25, 26
  "      0v", "3.3v    ",
  "  GPIOA4", "5v      ",
  "  GPIOA5", "5v      ",
  /* ---------nanopi duo end----------- */
 
+       NULL, NULL,
+       NULL, NULL,
+
+/* UART0, tx, rx */
+       NULL, NULL, 
+
+       NULL, NULL,     //39, 40
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,     //49, 50
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,     //59, 60
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,     //71, 72
+       NULL            //73
+} ;
+
+static int physToWpi_duo2 [MAX_PIN_COUNT] =
+{
+  -1,        // 0
+  -1,  15,   // 1, 2
+  -1,  14,   // 3, 4
+  -1,  -1,   // 5, 6
+  -1,  13,   // 7, 8
+
+  18,  12,   // 9, 10
+  16,   3,   //11, 12
+  -1,   2,   //13, 14
+  -1,   0,   //15, 16
+  -1,   7,   //17, 18
+  -1,   9,   //19, 20
+  -1,   8,   //21, 22
+  -1,  -1,   //23, 24
+
+  -1,  -1,   //25, 26
+  -1,  -1,   //27, 28
+  -1,  -1,   //29, 30
+  -1,  -1,   //31, 32
+
+
+   /* ---------nanopi duo end----------- */
+  -1,  -1,   //33, 34
+  -1,  -1,   //35, 36
+
+  -1,  -1,   //37, 38
+
+    /* 39~63 */
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+
+    /* 64~73 */
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+} ;
+
+static char *physNames_duo2 [MAX_PIN_COUNT] = 
+{
+  NULL,
+// 32 Pin 
+ "      5v", "GPIOA5  ",
+ "      5v", "GPIOA4  ", 
+ "    3.3v", "0v      ",
+ "      0v", "GPIOA11 ",
+ " GPIOL11", "GPIOA12 ",
+ " GPIOG11", "GPIOA13 ",
+ " USB-DM3", "GPIOA14 ",  //13, 14
+ " USB-DP3", "GPIOA16 ",
+ " USB-DM2", "GPIOA15 ",
+ " USB-DP2", "GPIOG7  ",
+ " EPhyRXN", "GPIOG6  ",
+ " EPhyRXP", "CVBS    ",
+ " EPhyTXN", "LineOutL",  //25, 26
+ " EPhyTXP", "LineOutR",
+ "EPhyLinK", "MIC_P   ",
+ " EPhySPD", "MIC_N   ",
+
+ /* ---------nanopi duo end----------- */
        NULL, NULL,
        NULL, NULL,
 
@@ -425,22 +512,25 @@ static char *physNames_neocore [MAX_PIN_COUNT] =
  *********************************************************************************
  */
 
-static void readallPhys (int boardId, int physPin, int pair)
+static void readallPhys (int faBoardId, int physPin, int pair)
 {
   int pin ;
   int *physToWpi;
   char **physNames;
 
-  if (boardId == NanoPi_M1 || boardId == NanoPi_K1_Plus || boardId == NanoPi_M1_Plus || boardId == NanoPi_M1_Plus2) {
+  if (faBoardId == NanoPi_M1 || faBoardId == NanoPi_K1_Plus || faBoardId == NanoPi_M1_Plus || faBoardId == NanoPi_M1_Plus2) {
        physToWpi = physToWpi_m1;
        physNames = physNames_m1;
-  } else if (boardId == NanoPi_NEO || boardId == NanoPi_NEO_Air || boardId == NanoPi_NEO2 || boardId == NanoPi_NEO_Plus2) {
+  } else if (faBoardId == NanoPi_NEO || faBoardId == NanoPi_NEO_Air || faBoardId == NanoPi_NEO2 || faBoardId == NanoPi_NEO_Plus2) {
       physToWpi = physToWpi_neo;
       physNames = physNames_neo;
-  } else if (boardId == NanoPi_Duo) {
+  } else if (faBoardId == NanoPi_Duo) {
       physToWpi = physToWpi_duo;
       physNames = physNames_duo;
-  } else if (boardId == NanoPi_NEO_Core || boardId == NanoPi_NEO_Core2) {
+  } else if (faBoardId == NanoPi_Duo2) {
+      physToWpi = physToWpi_duo2;
+      physNames = physNames_duo2;
+  } else if (faBoardId == NanoPi_NEO_Core || faBoardId == NanoPi_NEO_Core2) {
       physToWpi = physToWpi_neocore;
       physNames = physNames_neocore;
   } else {
@@ -469,8 +559,14 @@ static void readallPhys (int boardId, int physPin, int pair)
        pin = physToWpi [physPin] ;
     }
 
-     printf (" | %4s", alts [getAlt (pin)]) ;
-     printf (" | %d", digitalRead (pin)) ;
+     int alt = getAltSilence (pin);
+     if (alt >= 0) {
+       printf (" | %4s", alts [alt]) ;
+     } else {
+       printf (" |     ") ;
+     }
+     
+     printf (" | %d", digitalReadSilence (pin)) ;
   }
 
 // Pin numbers:
@@ -502,8 +598,13 @@ static void readallPhys (int boardId, int physPin, int pair)
        pin = physToWpi [physPin] ;
     }
 
-    printf (" | %d", digitalRead (pin)) ;
-    printf (" | %-4s", alts [getAlt (pin)]) ;
+    printf (" | %d", digitalReadSilence (pin)) ;
+    int alt = getAltSilence (pin);
+    if (alt >= 0) {
+       printf (" | %4s", alts [alt]) ;
+    } else {
+       printf (" |     ") ;
+    }
   }
 
   printf (" | %-5s", physNames [physPin]) ;
@@ -516,18 +617,68 @@ static void readallPhys (int boardId, int physPin, int pair)
   printf (" |\n") ;
 }
 
+static void debugReadallPhys (int faBoardId, int physPin)
+{
+  int pin ;
+  int *physToWpi;
+  char **physNames;
+
+  if (faBoardId == NanoPi_M1 || faBoardId == NanoPi_K1_Plus || faBoardId == NanoPi_M1_Plus || faBoardId == NanoPi_M1_Plus2) {
+       physToWpi = physToWpi_m1;
+       physNames = physNames_m1;
+  } else if (faBoardId == NanoPi_NEO || faBoardId == NanoPi_NEO_Air || faBoardId == NanoPi_NEO2 || faBoardId == NanoPi_NEO_Plus2) {
+      physToWpi = physToWpi_neo;
+      physNames = physNames_neo;
+  } else if (faBoardId == NanoPi_Duo) {
+      physToWpi = physToWpi_duo;
+      physNames = physNames_duo;
+  } else if (faBoardId == NanoPi_Duo2) {
+      physToWpi = physToWpi_duo2;
+      physNames = physNames_duo2;
+  } else if (faBoardId == NanoPi_NEO_Core || faBoardId == NanoPi_NEO_Core2) {
+      physToWpi = physToWpi_neocore;
+      physNames = physNames_neocore;
+  } else {
+      return ;
+  }
+
+  printf("## physPin: %d, %s\n", physPin, physNames [physPin]);
+  if (physPinToGpio (physPin) == -1)
+    printf("\tnot gpio\n");
+  else
+    printf("\tphysPinToGpio=%d, physToWpi=%d\n", physPinToGpio (physPin), physToWpi [physPin]);
+
+  if (physToWpi [physPin] == -1) {
+    printf("\t\tnot Wpi pin\n");
+  } else {
+   if (wpMode == WPI_MODE_GPIO) {
+       pin = physPinToGpio (physPin) ;
+       printf("\t\tWPI_MODE_GPIO, physPinToGpio (physPin) = %d\n", pin);
+   } else if (wpMode == WPI_MODE_PHYS) {
+       pin = physPin ;
+       printf("\t\tWPI_MODE_PHYS, pin = physPin = %d\n", pin);
+    } else {
+       printf("\t\tUnknow Mode, physPin=%d, physToWpi [physPin] =%d\n", physPin, physToWpi [physPin]);
+       pin = physToWpi [physPin] ;
+    }
+
+     printf ("\t\t\talts = %4s\n", alts [getAltSilence (pin)]) ;
+     printf ("\t\t\tdigitalRead = %d\n", digitalReadSilence (pin)) ;
+  }
+}
+
 void NanoPiReadAll()
 {
   int pin ;
   BoardHardwareInfo* retBoardInfo;
-  int boardId;
-  boardId = getBoardType(&retBoardInfo);
-  if (boardId >= 0) {
-      if (boardId > ALLWINNER_BASE && boardId <= ALLWINNER_MAX 
-                && boardId != NanoPi_A64) {
+  int ret = getBoardType(&retBoardInfo);
+  if (ret >= 0) {
+      if (retBoardInfo->boardTypeId > ALLWINNER_BASE 
+        && retBoardInfo->boardTypeId <= ALLWINNER_MAX 
+        && retBoardInfo->boardTypeId != NanoPi_A64) {
           // nothing to do.
       } else {
-        printf ("This NanoPi model is currently not supported. ") ;
+        printf ("This NanoPi model is currently not supported. \n") ;
         return ;
       }
   } else {
@@ -538,19 +689,32 @@ void NanoPiReadAll()
   }
 
   int pinCount;
-  if (boardId == NanoPi_M1 || boardId == NanoPi_K1_Plus || boardId == NanoPi_M1_Plus || boardId == NanoPi_M1_Plus2) {
+  if (retBoardInfo->boardTypeId == NanoPi_M1 
+    || retBoardInfo->boardTypeId == NanoPi_K1_Plus 
+    || retBoardInfo->boardTypeId == NanoPi_M1_Plus 
+    || retBoardInfo->boardTypeId == NanoPi_M1_Plus2) {
       pinCount = 40;
-  } else if (boardId == NanoPi_NEO 
-    || boardId == NanoPi_NEO_Air 
-    || boardId == NanoPi_NEO2 
-    || boardId == NanoPi_NEO_Plus2
-    || boardId == NanoPi_NEO_Core
-    || boardId == NanoPi_NEO_Core2
+  } else if (retBoardInfo->boardTypeId == NanoPi_NEO 
+    || retBoardInfo->boardTypeId == NanoPi_NEO_Air 
+    || retBoardInfo->boardTypeId == NanoPi_NEO2 
+    || retBoardInfo->boardTypeId == NanoPi_NEO_Plus2
+    || retBoardInfo->boardTypeId == NanoPi_NEO_Core
+    || retBoardInfo->boardTypeId == NanoPi_NEO_Core2
     ) {
       pinCount = 24;
-  } else if (boardId == NanoPi_Duo) {
+  } else if (retBoardInfo->boardTypeId == NanoPi_Duo 
+    || retBoardInfo->boardTypeId == NanoPi_Duo2) {
       pinCount = 32;
   } else {
+      printf ("This NanoPi model(id: %d) is currently not supported. \n", retBoardInfo->boardTypeId) ;
+      return ;
+  }
+
+  if (DEBUG_READALL) {
+    printf (" +-----+-----+----------+------+---+-%s--+------+----------+-----+-----+\n", retBoardInfo->boardDisplayName) ;
+    for (pin = 1 ; pin <= pinCount ; pin++) {
+      debugReadallPhys (retBoardInfo->boardTypeId, pin) ;
+    }
     return ;
   }
 
@@ -559,34 +723,44 @@ void NanoPiReadAll()
   printf (" | BCM | wPi |   Name   | Mode | V | Physical | V | Mode | Name     | wPi | BCM |\n") ;
   printf (" +-----+-----+----------+------+---+----++----+---+------+----------+-----+-----+\n") ;
   for (pin = 1 ; pin <= pinCount ; pin += 2)
-    readallPhys (boardId, pin, 1) ;
+    readallPhys (retBoardInfo->boardTypeId, pin, 1) ;
   printf (" +-----+-----+----------+------+---+----++----+---+------+----------+-----+-----+\n") ;
   printf (" | BCM | wPi |   Name   | Mode | V | Physical | V | Mode | Name     | wPi | BCM |\n") ;
   printf (" +-----+-----+----------+------+---+-%s--+------+----------+-----+-----+\n", retBoardInfo->boardDisplayName) ;	
   printf ("\n");
 
   /* Print Second 1 ~ 12/24 pins */
-  if (boardId == NanoPi_M1 || boardId == NanoPi_K1_Plus || boardId == NanoPi_M1_Plus || boardId == NanoPi_M1_Plus2) {
+  if (retBoardInfo->boardTypeId == NanoPi_M1 
+    || retBoardInfo->boardTypeId == NanoPi_K1_Plus 
+    || retBoardInfo->boardTypeId == NanoPi_M1_Plus 
+    || retBoardInfo->boardTypeId == NanoPi_M1_Plus2) {
     // nothing to do.
-  } else if (boardId == NanoPi_NEO || boardId == NanoPi_NEO_Air || boardId == NanoPi_NEO2 || boardId == NanoPi_NEO_Plus2) {
+  } else if (retBoardInfo->boardTypeId == NanoPi_NEO 
+    || retBoardInfo->boardTypeId == NanoPi_NEO_Air 
+    || retBoardInfo->boardTypeId == NanoPi_NEO2 
+    || retBoardInfo->boardTypeId == NanoPi_NEO_Plus2) {
     printf (" +-----+----%s USB/Audio-+----+\n", retBoardInfo->boardDisplayName) ;
     printf (" | BCM | wPi |   Name   | Mode | V | Ph |\n") ;
     printf (" +-----+-----+----------+------+---+----+\n") ;
     for (pin = 25 ; pin <= 36 ; pin++) {
-      readallPhys (boardId, pin, 0) ;
+      readallPhys (retBoardInfo->boardTypeId, pin, 0) ;
     }
     printf (" +-----+-----+----------+------+---+----+\n") ;
 	printf ("\n");
-  } else if (boardId == NanoPi_Duo || boardId == NanoPi_NEO_Core || boardId == NanoPi_NEO_Core2) {
+  } else if (retBoardInfo->boardTypeId == NanoPi_Duo 
+    || retBoardInfo->boardTypeId == NanoPi_Duo2 
+    || retBoardInfo->boardTypeId == NanoPi_NEO_Core 
+    || retBoardInfo->boardTypeId == NanoPi_NEO_Core2) {
       // nothing to do.
   }
 
-  if (boardId == NanoPi_NEO_Core || boardId == NanoPi_NEO_Core2) {
+  if (retBoardInfo->boardTypeId == NanoPi_NEO_Core 
+    || retBoardInfo->boardTypeId == NanoPi_NEO_Core2) {
     printf (" +-----+-----+----------+---- %s USB/Audio ----+----------+-----+-----+\n", retBoardInfo->boardDisplayName) ;
     printf (" | BCM | wPi |   Name   | Mode | V | Physical | V | Mode | Name     | wPi | BCM |\n") ;
     printf (" +-----+-----+----------+------+---+----++----+---+------+----------+-----+-----+\n") ;
     for (pin = 25 ; pin <= 48 ; pin += 2)
-      readallPhys (boardId, pin, 1) ;
+      readallPhys (retBoardInfo->boardTypeId, pin, 1) ;
     printf (" +-----+-----+----------+------+---+----++----+---+------+----------+-----+-----+\n") ;
     printf (" | BCM | wPi |   Name   | Mode | V | Physical | V | Mode | Name     | wPi | BCM |\n") ;
     printf (" +-----+-----+----------+------+---+-%s--+------+----------+-----+-----+\n", retBoardInfo->boardDisplayName) ; 
@@ -596,32 +770,41 @@ void NanoPiReadAll()
     printf (" | BCM | wPi |   Name   | Mode | V | Physical | V | Mode | Name     | wPi | BCM |\n") ;
     printf (" +-----+-----+----------+------+---+----++----+---+------+----------+-----+-----+\n") ;
     for (pin = 49 ; pin <= 68 ; pin += 2)
-      readallPhys (boardId, pin, 1) ;
+      readallPhys (retBoardInfo->boardTypeId, pin, 1) ;
     printf (" +-----+-----+----------+------+---+----++----+---+------+----------+-----+-----+\n") ;
     printf (" | BCM | wPi |   Name   | Mode | V | Physical | V | Mode | Name     | wPi | BCM |\n") ;
     printf (" +-----+-----+----------+------+---+-%s--+------+----------+-----+-----+\n", retBoardInfo->boardDisplayName) ; 
     printf ("\n");
   }
 
-  if (boardId == NanoPi_M1 || boardId == NanoPi_K1_Plus || boardId == NanoPi_M1_Plus || boardId == NanoPi_M1_Plus2) {
+  if (retBoardInfo->boardTypeId == NanoPi_M1 
+    || retBoardInfo->boardTypeId == NanoPi_K1_Plus 
+    || retBoardInfo->boardTypeId == NanoPi_M1_Plus 
+    || retBoardInfo->boardTypeId == NanoPi_M1_Plus2) {
     printf (" +-----+----%s Debug UART-+----+\n", retBoardInfo->boardDisplayName) ;
     printf (" | BCM | wPi |   Name   | Mode | V | Ph |\n") ;
     printf (" +-----+-----+----------+------+---+----+\n") ;
     for (pin = 41 ; pin < 45 ; pin++) {
-      readallPhys (boardId, pin, 0) ;
+      readallPhys (retBoardInfo->boardTypeId, pin, 0) ;
     }
     printf (" +-----+-----+----------+------+---+----+\n") ;
 	printf ("\n");
-  } else if (boardId == NanoPi_NEO || boardId == NanoPi_NEO_Air || boardId == NanoPi_NEO2 || boardId == NanoPi_NEO_Plus2) {
+  } else if (retBoardInfo->boardTypeId == NanoPi_NEO 
+    || retBoardInfo->boardTypeId == NanoPi_NEO_Air 
+    || retBoardInfo->boardTypeId == NanoPi_NEO2 
+    || retBoardInfo->boardTypeId == NanoPi_NEO_Plus2) {
     printf (" +-----+----%s Debug UART-+----+\n", retBoardInfo->boardDisplayName) ;
     printf (" | BCM | wPi |   Name   | Mode | V | Ph |\n") ;
     printf (" +-----+-----+----------+------+---+----+\n") ;
     for (pin = 37 ; pin <= 38 ; pin++) {
-      readallPhys (boardId, pin, 0) ;
+      readallPhys (retBoardInfo->boardTypeId, pin, 0) ;
     }
     printf (" +-----+-----+----------+------+---+----+\n") ;
 	printf ("\n");
-  } else if (boardId == NanoPi_Duo || boardId == NanoPi_NEO_Core || boardId == NanoPi_NEO_Core2) {
+  } else if (retBoardInfo->boardTypeId == NanoPi_Duo 
+    || retBoardInfo->boardTypeId == NanoPi_Duo2 
+    || retBoardInfo->boardTypeId == NanoPi_NEO_Core 
+    || retBoardInfo->boardTypeId == NanoPi_NEO_Core2) {
       // nothing to do.
   }
 }

@@ -5,6 +5,7 @@ Currently supported boards:
 NanoPi Neo  
 NanoPi Neo Air  
 NanoPi Duo  
+NanoPi Duo2
 NanoPi NEO2  
 NanoPi NEO Plus2  
 NanoPi M1  

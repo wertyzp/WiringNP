@@ -1130,11 +1130,10 @@ int main (int argc, char *argv [])
     printf ("\n") ;
 
     BoardHardwareInfo* retBoardInfo;
-    int boardId;
-    boardId = getBoardType(&retBoardInfo);
-    if (boardId >= 0) {
-      if (boardId > ALLWINNER_BASE && boardId <= ALLWINNER_MAX 
-		&& boardId != NanoPi_A64) {
+    int ret = getBoardType(&retBoardInfo);
+    if (ret >= 0) {
+      if (retBoardInfo->boardTypeId > ALLWINNER_BASE && retBoardInfo->boardTypeId <= ALLWINNER_MAX 
+		&& retBoardInfo->boardTypeId != NanoPi_A64) {
         printf ("NanoPi Details:\n") ;
         printf ("  Type: %s, Revision: %d, Maker: FriednlyELEC\n\n", 
           retBoardInfo->boardDisplayName, retBoardInfo->kernelRevision) ;

@@ -382,7 +382,7 @@ static int pinToGpio_duo [MAX_PIN_COUNT] ={
    -1, 12,   //11, 12
    11, 4,   //13, 14
    5, 203,   //15, 16
-   -1, -1,   //17, 18
+   -1,363,   //17, 18
    -1, -1,   //19, 20
    -1, -1,  //21, 22
    -1, -1,  //23, 24
@@ -406,7 +406,41 @@ static int pinToGpio_duo [MAX_PIN_COUNT] ={
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 };
 
+// wPi number to /sys/gpio number
+static int pinToGpio_duo2 [MAX_PIN_COUNT] ={
+    16,       //0
+ /* 32 Pin */
+   -1, 14,   //1, 2
+   13, -1,   //3, 4
+   -1, -1,   //5, 6
+   15,198,   //7, 8
+   -1,199,   //9, 10
+   -1, 12,   //11, 12
+   11,  4,   //13, 14
+    5,203,   //15, 16
+   -1,363,   //17, 18
+   -1, -1,   //19, 20
+   -1, -1,  //21, 22
+   -1, -1,  //23, 24
+   -1, -1,   //25, 26
+   -1, -1,   //27, 28
+   -1, -1,   //29, 30
+   -1, -1,   //31, 32
+   /* ---------nanopi duo end----------- */
 
+    -1, -1,   //33, 34
+    -1, -1,   //35, 36
+
+    /* UART0 Tx,Rx */
+    -1, -1,     //37, 38
+
+    /* 39~63 */
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+
+    /* 64~73 */
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+};
 
 // wPi number to /sys/gpio number
 static int pinToGpio_neocore [MAX_PIN_COUNT] ={
@@ -438,9 +472,6 @@ static int pinToGpio_neocore [MAX_PIN_COUNT] ={
    /* 64~73 */
    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 };
-
-
-
 
 
 /*
@@ -555,8 +586,6 @@ static int physToGpio_neocore [MAX_PIN_COUNT] ={
   -1,        //73
 };
 
-
-
 static int physToGpio_m1 [MAX_PIN_COUNT] ={
     -1, // 0
     -1, -1, // 1, 2
@@ -586,7 +615,6 @@ static int physToGpio_m1 [MAX_PIN_COUNT] ={
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 };
 
-
 // phys pin number to /sys/gpio number
 static int physToGpio_duo [MAX_PIN_COUNT] ={
    -1,        //0
@@ -596,7 +624,7 @@ static int physToGpio_duo [MAX_PIN_COUNT] ={
    -1, -1,   //5, 6
    -1, -1,   //7, 8
    -1, -1,   //9, 10
-   198,-1,   //11, 12
+   198,363,   //11, 12
    199,-1,   //13, 14
    15, -1,   //15, 16
    16, -1,   //17, 18
@@ -622,6 +650,44 @@ static int physToGpio_duo [MAX_PIN_COUNT] ={
     /* 64~73 */
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 };
+
+
+// phys pin number to /sys/gpio number
+static int physToGpio_duo2 [MAX_PIN_COUNT] ={
+   -1,        //0
+ /* 32 Pin */
+   -1,   5,   //1, 2
+   -1,   4,   //3, 4
+   -1,  -1,   //5, 6
+   -1,  11,   //7, 8
+  363,  12,   //9, 10
+  203,  13,   //11, 12
+   -1,  14,   //13, 14
+   -1,  16,   //15, 16
+   -1,  15,   //17, 18
+   -1, 199,   //19, 20
+   -1, 198,  //21, 22
+   -1,  -1,  //23, 24
+   -1,  -1,   //25, 26
+   -1,  -1,   //27, 28
+   -1,  -1,   //29, 30
+   -1,  -1,   //31, 32
+   /* ---------nanopi duo end----------- */
+
+    -1, -1,   //33, 34
+    -1, -1,   //35, 36
+
+    /* UART0 Tx,Rx */
+    -1, -1,     //37, 38
+
+    /* 39~63 */
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+
+    /* 64~73 */
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+};
+
 //
 
 static int syspin_neo [MAX_PIN_COUNT] ={
@@ -673,6 +739,17 @@ static int syspin_duo [MAX_PIN_COUNT] ={
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 };
 
+static int syspin_duo2 [MAX_PIN_COUNT] ={
+    -1, -1, 2, 3, 4, 5, 6, 7, 
+    8, 9, 10, 11, 12, 13, 14, 15,
+    16, 17, 18, 19, 20, 21, 22, 23,
+    24, 25, 26, 27, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+
+    /* 64~73 */
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+};
 
 /*static int edge [MAX_PIN_COUNT] ={
     -1, -1, -1, -1, 4, -1, -1, 7, //support the INT
@@ -817,11 +894,43 @@ static int physToPin_duo [MAX_PIN_COUNT] = //return wiringPI pin //note: same as
    2,  -1,   //19, 20
    3,  16,   //21, 22
   12,  -1,   //23, 24
-
   13,  -1,   //25, 26
   -1,  -1,   //27, 28
   14,  -1,   //29, 30
   15,  -1,   //31, 32
+   /* ---------nanopi duo end----------- */
+  -1,  -1,   //33, 34
+  -1,  -1,   //35, 36
+
+  -1,  -1,   //37, 38
+
+    /* 39~63 */
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+
+    /* 64~73 */
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+};
+
+static int physToPin_duo2 [MAX_PIN_COUNT] = //return wiringPI pin //note: same as physToWpi
+{
+  -1,        // 0
+  -1,  15,   // 1, 2
+  -1,  14,   // 3, 4
+  -1,  -1,   // 5, 6
+  -1,  13,   // 7, 8
+  -1,  12,   // 9, 10
+  16,   3,   //11, 12
+  -1,   2,   //13, 14
+  -1,   0,   //15, 16
+  -1,   7,   //17, 18
+  -1,   9,   //19, 20
+  -1,   8,   //21, 22
+  -1,  -1,   //23, 24
+  -1,  -1,   //25, 26
+  -1,  -1,   //27, 28
+  -1,  -1,   //29, 30
+  -1,  -1,   //31, 32
    /* ---------nanopi duo end----------- */
   -1,  -1,   //33, 34
   -1,  -1,   //35, 36
@@ -1285,11 +1394,10 @@ int isA20(void) {
 
 int piBoardRev(void) {
     BoardHardwareInfo* retBoardInfo;
-    int boardId;
-    boardId = getBoardType(&retBoardInfo);
-    if (boardId >= 0) {
-      if (boardId > ALLWINNER_BASE && boardId <= ALLWINNER_MAX 
-                && boardId != NanoPi_A64) {
+    int ret = getBoardType(&retBoardInfo);
+    if (ret >= 0) {
+      if (retBoardInfo->boardTypeId > ALLWINNER_BASE && retBoardInfo->boardTypeId <= ALLWINNER_MAX 
+                && retBoardInfo->boardTypeId != NanoPi_A64) {
         version = BPRVER;
         if (wiringPiDebug)
             printf("piBoardRev:  %d\n", version);
@@ -1313,19 +1421,14 @@ int piBoardRev(void) {
  */
 
 void piBoardId(int *model, int *rev, int *mem, int *maker, int *overVolted) {
-    FILE *cpuFd;
-    char line [120];
-    char *c;
-
     (void) piBoardRev(); // Call this first to make sure all's OK. Don't care about the result.
 
     BoardHardwareInfo* retBoardInfo;
-    int boardId;
-    boardId = getBoardType(&retBoardInfo);
-    if (boardId >= 0) {
-        if (boardId > ALLWINNER_BASE && boardId <= ALLWINNER_MAX 
-                && boardId != NanoPi_A64) {
-            *model = boardId;
+    int ret = getBoardType(&retBoardInfo);
+    if (ret >= 0) {
+        if (retBoardInfo->boardTypeId > ALLWINNER_BASE && retBoardInfo->boardTypeId <= ALLWINNER_MAX 
+                && retBoardInfo->boardTypeId != NanoPi_A64) {
+            *model = retBoardInfo->boardTypeId;
             *rev = PI_VERSION_1_2;
             *mem = 1024;
             *maker = PI_MAKER_FRIENDLYELEC;
@@ -1446,6 +1549,33 @@ int getAlt(int pin) {
     alt = sunxi_get_gpio_mode(pin);
     return alt;
 
+}
+
+int getAltSilence(int pin) {
+    int alt;
+
+  if (pin >= MAX_PIN_COUNT || pin < 0) {
+        return -1;
+  }
+  
+    if (pinToGpio == 0 || physToGpio == 0) {
+        return -1;
+    }
+
+    //printf("[%s:L%d] the pin:%d  mode: %d is invaild,please check it over!\n", __func__,  __LINE__, pin, wiringPiMode);
+    if (wiringPiMode == WPI_MODE_PINS)
+        pin = pinToGpio [pin];
+    else if (wiringPiMode == WPI_MODE_PHYS)
+        pin = physToGpio[pin];
+    else if (wiringPiMode == WPI_MODE_GPIO)    //pin = pinTobcm[pin]; 
+        pin = pin;
+    else return 0;
+
+    if (-1 == pin) {
+        return -1;
+    }
+    alt = sunxi_get_gpio_mode(pin);
+    return alt;
 }
 
 /*
@@ -1611,7 +1741,7 @@ void pinMode(int pin, int mode) {
 
   if (pinToGpio == 0 || physToGpio == 0) {
     printf("please call wiringPiSetup first.\n");
-    return -1;
+    return;
   }
 
   // On-board pin
@@ -1736,9 +1866,12 @@ int digitalRead(int pin) {
     struct wiringPiNodeStruct *node = wiringPiNodes;
     int oldPin = pin;
 
+    if (wiringPiDebug)
+      printf("Func: %s, Line: %d,pin:%d\n", __func__, __LINE__, pin);
+
     if (pinToGpio == 0 || physToGpio == 0) {
         printf("please call wiringPiSetup first.\n");
-        return;
+        return 0;
     }
 
     if (pin > 0 && pin < MAX_PIN_COUNT) {
@@ -1753,13 +1886,13 @@ int digitalRead(int pin) {
 			    return 0;
 		    }
 
-                //TODO: fix me
-                /*
+        //TODO: fix me
+        /*
 		    if (syspin[pin] == -1) {
 			    //printf("%d %s,%d invalid pin,please check it over.\n",pin,__func__, __LINE__);
 			    return 0;
 		    }
-                */
+        */
 
 		    if (sysFds [pin] == -1) {
 			    if (wiringPiDebug)
@@ -1783,7 +1916,7 @@ int digitalRead(int pin) {
 		    }
 	    } else if (wiringPiMode == WPI_MODE_GPIO) {
 		    // pin = pinTobcm[pin]; 
-                    pin = pin;
+        pin = pin;
 
 		    if (wiringPiDebug) {
 			    printf(">>> pinTobcm[pin] ret %d\n", pin);
@@ -1802,8 +1935,49 @@ int digitalRead(int pin) {
             return LOW;
         return node->digitalRead(node, pin);
     }
+}
 
+int digitalReadSilence(int pin) {
+    char c;
+    struct wiringPiNodeStruct *node = wiringPiNodes;
+    int oldPin = pin;
 
+    if (pinToGpio == 0 || physToGpio == 0) {
+        return 0;
+    }
+
+    if (pin > 0 && pin < MAX_PIN_COUNT) {
+      if (wiringPiMode == WPI_MODE_GPIO_SYS) // Sys mode
+      {
+        if (pin == 0) {
+          return 0;
+        }
+
+        if (sysFds [pin] == -1) {
+          return LOW;
+        }
+        lseek(sysFds [pin], 0L, SEEK_SET);
+        read(sysFds [pin], &c, 1);
+        return (c == '0') ? LOW : HIGH;
+      } else if (wiringPiMode == WPI_MODE_PINS) {
+        pin = pinToGpio [pin];
+      } else if (wiringPiMode == WPI_MODE_PHYS) {
+        pin = physToGpio[pin];
+      } else if (wiringPiMode == WPI_MODE_GPIO) {
+        // pin = pinTobcm[pin]; 
+        pin = pin;
+      } else {
+        return LOW;
+      }
+      if (-1 == pin) {
+        return LOW;
+      }
+      return sunxi_digitalRead(pin);
+    } else {
+        if ((node = wiringPiFindNode(pin)) == NULL)
+            return LOW;
+        return node->digitalRead(node, pin);
+    }
 }
 
 /*
@@ -2334,23 +2508,28 @@ int wiringPiSetup(void) {
     piBoardId(&model, &rev, &mem, &maker, &overVolted);
     wiringPiMode = WPI_MODE_PINS;
 
-    int boardId = model;
-    if (boardId == NanoPi_M1 || boardId == NanoPi_M1_Plus || boardId == NanoPi_M1_Plus2 || boardId == NanoPi_K1_Plus) {
+    int faBoardId = model;
+    if (faBoardId == NanoPi_M1 || faBoardId == NanoPi_M1_Plus || faBoardId == NanoPi_M1_Plus2 || faBoardId == NanoPi_K1_Plus) {
 	    pinToGpio = pinToGpio_m1;
 	    physToGpio = physToGpio_m1;
 	    physToPin = physToPin_m1;
-		syspin = syspin_m1;
-    } else if (boardId == NanoPi_NEO || boardId == NanoPi_NEO_Air || boardId == NanoPi_NEO2 || boardId == NanoPi_NEO_Plus2) {
+		  syspin = syspin_m1;
+    } else if (faBoardId == NanoPi_NEO || faBoardId == NanoPi_NEO_Air || faBoardId == NanoPi_NEO2 || faBoardId == NanoPi_NEO_Plus2) {
 	    pinToGpio = pinToGpio_neo;
 	    physToGpio = physToGpio_neo;
 	    physToPin = physToPin_neo;
-		syspin = syspin_neo;
-    } else if (boardId == NanoPi_Duo) {
+      syspin = syspin_neo;
+    } else if (faBoardId == NanoPi_Duo) {
 	    pinToGpio = pinToGpio_duo;
 	    physToGpio = physToGpio_duo;
 	    physToPin = physToPin_duo;
-		syspin = syspin_duo;
-    } else if (boardId == NanoPi_NEO_Core || boardId == NanoPi_NEO_Core2) {
+		  syspin = syspin_duo;
+    } else if (faBoardId == NanoPi_Duo2) {
+      pinToGpio = pinToGpio_duo2;
+      physToGpio = physToGpio_duo2;
+      physToPin = physToPin_duo2;
+      syspin = syspin_duo2;
+    } else if (faBoardId == NanoPi_NEO_Core || faBoardId == NanoPi_NEO_Core2) {
 	    pinToGpio = pinToGpio_neocore;
 	    physToGpio = physToGpio_neocore;
 	    physToPin = physToPin_neocore;
@@ -2427,23 +2606,27 @@ int wiringPiSetupSys(void) {
         printf("wiringPi: wiringPiSetupSys called\n");
 
     piBoardId(&model, &rev, &mem, &maker, &overVolted);
-    int boardId = model;
-    if (boardId == NanoPi_M1 || boardId == NanoPi_M1_Plus || boardId == NanoPi_M1_Plus2 || boardId == NanoPi_K1_Plus) {
+    int faBoardId = model;
+    if (faBoardId == NanoPi_M1 || faBoardId == NanoPi_M1_Plus || faBoardId == NanoPi_M1_Plus2 || faBoardId == NanoPi_K1_Plus) {
         pinToGpio = pinToGpio_m1;
         physToGpio = physToGpio_m1;
         physToPin = physToPin_m1;
-    } else if (boardId == NanoPi_NEO || boardId == NanoPi_NEO_Air || boardId == NanoPi_NEO2 || boardId == NanoPi_NEO_Plus2) {
+    } else if (faBoardId == NanoPi_NEO || faBoardId == NanoPi_NEO_Air || faBoardId == NanoPi_NEO2 || faBoardId == NanoPi_NEO_Plus2) {
         pinToGpio = pinToGpio_neo;
         physToGpio = physToGpio_neo;
         physToPin = physToPin_neo;
-    } else if (boardId == NanoPi_Duo) {
+    } else if (faBoardId == NanoPi_Duo) {
         pinToGpio = pinToGpio_duo;
         physToGpio = physToGpio_duo;
         physToPin = physToPin_duo;
-    } else if (boardId == NanoPi_NEO_Core || boardId == NanoPi_NEO_Core2) {
-      pinToGpio = pinToGpio_neocore;
-      physToGpio = physToGpio_neocore;
-      physToPin = physToPin_neocore;
+    } else if (faBoardId == NanoPi_Duo2) {
+        pinToGpio = pinToGpio_duo2;
+        physToGpio = physToGpio_duo2;
+        physToPin = physToPin_duo2;
+    } else if (faBoardId == NanoPi_NEO_Core || faBoardId == NanoPi_NEO_Core2) {
+        pinToGpio = pinToGpio_neocore;
+        physToGpio = physToGpio_neocore;
+        physToPin = physToPin_neocore;
     }
 
     for (pin = 1; pin < MAX_PIN_COUNT; ++pin) {
