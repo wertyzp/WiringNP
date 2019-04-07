@@ -54,11 +54,11 @@ echo "WiringPi Library"
 cd wiringPi
 ${PFX}make uninstall
 if [ x$1 = "xstatic" ]; then
-  make static
+  make -j `nproc` static
   check_make_ok
   ${PFX}make install-static
 else
-  make
+  make -j `nproc`
   check_make_ok
   ${PFX}make install
 fi
@@ -69,11 +69,11 @@ echo "WiringPi Devices Library"
 cd ../devLib
 ${PFX}make uninstall
 if [ x$1 = "xstatic" ]; then
-  make static
+  make -j `nproc` static
   check_make_ok
   ${PFX}make install-static
 else
-  make
+  make -j `nproc`
   check_make_ok
   ${PFX}make install
 fi
@@ -82,7 +82,7 @@ check_make_ok
 echo
 echo "GPIO Utility"
 cd ../gpio
-make
+make -j `nproc`
 check_make_ok
 ${PFX}make install
 check_make_ok
