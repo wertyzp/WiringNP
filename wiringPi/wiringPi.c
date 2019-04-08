@@ -1854,24 +1854,23 @@ int digitalRead(int pin) {
         return 0;
     }
 
+    if (pin == 0 && wiringPiMode == WPI_MODE_GPIO_SYS) {
+        //printf("%d %s,%d invalid pin,please check it over.\n",pin,__func__, __LINE__);
+        return 0;
+    }
     if (pin > 0 && pin < MAX_PIN_COUNT) {
         if (wiringPiMode == WPI_MODE_GPIO_SYS) { // Sys mode
 		    if (wiringPiDebug) {
 			    printf("in digitalRead, wiringPiMode == WPI_MODE_GPIO_SYS\n");
 		    }
-		    if (pin == 0) {
-			    //printf("%d %s,%d invalid pin,please check it over.\n",pin,__func__, __LINE__);
-			    return 0;
-		    }
-
-        //TODO: fix me
-        /*
-		    if (syspin[pin] == -1) {
-			    //printf("%d %s,%d invalid pin,please check it over.\n",pin,__func__, __LINE__);
-			    return 0;
-		    }
-        */
-		    if (sysFds [pin] == -1) {
+            //TODO: fix me
+            /*
+            if (syspin[pin] == -1) {
+                //printf("%d %s,%d invalid pin,please check it over.\n",pin,__func__, __LINE__);
+                return 0;
+            }
+            */
+            if (sysFds [pin] == -1) {
 			    if (wiringPiDebug)
 				    printf("pin %d sysFds -1.%s,%d\n", pin, __func__, __LINE__);
 			    return LOW;
@@ -1921,11 +1920,12 @@ int digitalReadSilence(int pin) {
         return 0;
     }
 
+    if (pin == 0 && wiringPiMode == WPI_MODE_GPIO_SYS) {
+        return 0;
+    }
+
     if (pin > 0 && pin < MAX_PIN_COUNT) {
         if (wiringPiMode == WPI_MODE_GPIO_SYS) { // Sys mode
-            if (pin == 0) {
-                return 0;
-            }
             if (sysFds [pin] == -1) {
                 return LOW;
             }
