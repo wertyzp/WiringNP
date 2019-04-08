@@ -134,6 +134,10 @@ struct wiringPiNodeStruct *wiringPiNodes = NULL;
 #define GPIO_PWM          (BCM2708_PERI_BASE + 0x0020C000)
 
 #define PAGE_SIZE  (4*1024)
+// Since BLOCK_SIZE is defined in /usr/include/linux/fs.h:
+#ifdef BLOCK_SIZE
+#undef BLOCK_SIZE
+#endif
 #define BLOCK_SIZE (4*1024)
 
 // PWM
