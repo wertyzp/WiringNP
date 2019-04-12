@@ -1680,21 +1680,21 @@ struct wiringPiNodeStruct *wiringPiNewNode(int pinBase, int numPins) {
             (void)wiringPiFailure(WPI_FATAL, "wiringPiNewNode: Pin %d overlaps with existing definition\n", pin);
 
     node = (struct wiringPiNodeStruct *) calloc(sizeof (struct wiringPiNodeStruct), 1); // calloc zeros
-    if (node == NULL)
+    if (node == NULL) {
         (void)wiringPiFailure(WPI_FATAL, "wiringPiNewNode: Unable to allocate memory: %s\n", strerror(errno));
-
-    node->pinBase = pinBase;
-    node->pinMax = pinBase + numPins - 1;
-    node->pinMode = pinModeDummy;
-    node->pullUpDnControl = pullUpDnControlDummy;
-    node->digitalRead = digitalReadDummy;
-    node->digitalWrite = digitalWriteDummy;
-    node->pwmWrite = pwmWriteDummy;
-    node->analogRead = analogReadDummy;
-    node->analogWrite = analogWriteDummy;
-    node->next = wiringPiNodes;
-    wiringPiNodes = node;
-
+    } else {
+        node->pinBase = pinBase;
+        node->pinMax = pinBase + numPins - 1;
+        node->pinMode = pinModeDummy;
+        node->pullUpDnControl = pullUpDnControlDummy;
+        node->digitalRead = digitalReadDummy;
+        node->digitalWrite = digitalWriteDummy;
+        node->pwmWrite = pwmWriteDummy;
+        node->analogRead = analogReadDummy;
+        node->analogWrite = analogWriteDummy;
+        node->next = wiringPiNodes;
+        wiringPiNodes = node;
+    }
     return node;
 }
 
