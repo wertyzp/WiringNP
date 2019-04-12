@@ -9,86 +9,86 @@ const char* allwinner_tempfile = "/sys/class/thermal/thermal_zone0/temp";
 #define LOGE printf
 
 BoardHardwareInfo gAllBoardHardwareInfo[] = {
-    {"MINI6410", -1, S3C6410_COMMON, "S3C6410_Board",""},
-    {"MINI210", -1, S5PV210_COMMON, "S5PV210_Board",""},
-    {"TINY4412", -1, S5P4412_COMMON, "S5P4412_Board",""},
-    {"mini2451", 0, S3C2451_COMMON, "S3C2451_Board", ""},
+    {"MINI6410", -1, S3C6410_COMMON, "S3C6410_Board", ""},
+    {"MINI210",  -1, S5PV210_COMMON, "S5PV210_Board", ""},
+    {"TINY4412", -1, S5P4412_COMMON, "S5P4412_Board", ""},
+    {"mini2451",  0, S3C2451_COMMON, "S3C2451_Board", ""},
 
     //s5p4418
-    {"nanopi2", 0, NanoPi2, "NanoPi2",""},
-    {"nanopi2", 1, NanoPC_T2, "NanoPC-T2",""},
-    {"nanopi2", 2, NanoPi_S2, "NanoPi-S2",""},
-    {"nanopi2", 3, Smart4418, "Smart4418",""},
-    {"nanopi2", 4, NanoPi2_Fire, "NanoPi2-Fire",""},
-    {"nanopi2", 5, NanoPi_M2, "NanoPi-M2",""},
-    {"nanopi2", 7, NanoPi_M2A, "NanoPi-M2A",""},
-    {"nanopi2", 0x103, Smart4418SDK, "Smart4418SDK",""},
+    {"nanopi2",     0, NanoPi2,      "NanoPi2",      ""},
+    {"nanopi2",     1, NanoPC_T2,    "NanoPC-T2",    ""},
+    {"nanopi2",     2, NanoPi_S2,    "NanoPi-S2",    ""},
+    {"nanopi2",     3, Smart4418,    "Smart4418",    ""},
+    {"nanopi2",     4, NanoPi2_Fire, "NanoPi2-Fire", ""},
+    {"nanopi2",     5, NanoPi_M2,    "NanoPi-M2",    ""},
+    {"nanopi2",     7, NanoPi_M2A,   "NanoPi-M2A",   ""},
+    {"nanopi2", 0x103, Smart4418SDK, "Smart4418SDK", ""},
 
     //s5p6818
-    {"nanopi3", 1, NanoPC_T3, "NanoPC-T3",""},
-    {"nanopi3", 2, NanoPi_M3B, "NanoPi-M3B",""},
-    {"nanopi3", 3, Smart6818, "Smart6818",""},
-    {"nanopi3", 4, NanoPC_T3T, "NanoPC-T3T",""},
-    {"nanopi3", 5, NanoPi_Fire3, "NanoPi-Fire3",""},
-    {"nanopi3", 7, NanoPi_M3, "NanoPi-M3",""},
+    {"nanopi3", 1, NanoPC_T3,    "NanoPC-T3",    ""},
+    {"nanopi3", 2, NanoPi_M3B,   "NanoPi-M3B",   ""},
+    {"nanopi3", 3, Smart6818,    "Smart6818",    ""},
+    {"nanopi3", 4, NanoPC_T3T,   "NanoPC-T3T",   ""},
+    {"nanopi3", 5, NanoPi_Fire3, "NanoPi-Fire3", ""},
+    {"nanopi3", 7, NanoPi_M3,    "NanoPi-M3",    ""},
 
     //allwinner h3
     // kernel 3.x
-    {"sun8i", 0, NanoPi_M1, "NanoPi-M1", "0(0)"},
-    {"sun8i", 0, NanoPi_NEO, "NanoPi-NEO", "1(0)"},
-    {"sun8i", 0, NanoPi_NEO_Air, "NanoPi-NEO-Air", "2(0)"},
-    {"sun8i", 0, NanoPi_M1_Plus, "NanoPi-M1-Plus", "3(0)"},
-    {"sun8i", 0, NanoPi_Duo, "NanoPi-Duo", "4(0)"},
+    {"sun8i", 0, NanoPi_M1,       "NanoPi-M1",       "0(0)"},
+    {"sun8i", 0, NanoPi_NEO,      "NanoPi-NEO",      "1(0)"},
+    {"sun8i", 0, NanoPi_NEO_Air,  "NanoPi-NEO-Air",  "2(0)"},
+    {"sun8i", 0, NanoPi_M1_Plus,  "NanoPi-M1-Plus",  "3(0)"},
+    {"sun8i", 0, NanoPi_Duo,      "NanoPi-Duo",      "4(0)"},
     {"sun8i", 0, NanoPi_NEO_Core, "NanoPi-NEO-Core", "5(0)"},
-    {"sun8i", 0, NanoPi_K1, "NanoPi-K1", "6(0)"},
-    {"sun8i", 0, NanoPi_Hero, "NanoPi-Hero", "7(0)"},
-    {"sun8i", 0, NanoPi_Duo2, "NanoPi-Duo2", "8(0)"},
-    {"sun8i", 0, NanoPi_R1, "NanoPi-R1", "9(0)"},
+    {"sun8i", 0, NanoPi_K1,       "NanoPi-K1",       "6(0)"},
+    {"sun8i", 0, NanoPi_Hero,     "NanoPi-Hero",     "7(0)"},
+    {"sun8i", 0, NanoPi_Duo2,     "NanoPi-Duo2",     "8(0)"},
+    {"sun8i", 0, NanoPi_R1,       "NanoPi-R1",       "9(0)"},
 
     // kernel 4.x
-    {"Allwinnersun8iFamily", 0, NanoPi_M1, "NanoPi-M1", "0(0)"},
-    {"Allwinnersun8iFamily", 0, NanoPi_NEO, "NanoPi-NEO", "1(0)"},
-    {"Allwinnersun8iFamily", 0, NanoPi_NEO_Air, "NanoPi-NEO-Air", "2(0)"},
-    {"Allwinnersun8iFamily", 0, NanoPi_M1_Plus, "NanoPi-M1-Plus", "3(0)"},
-    {"Allwinnersun8iFamily", 0, NanoPi_Duo, "NanoPi-Duo", "4(0)"},
+    {"Allwinnersun8iFamily", 0, NanoPi_M1,       "NanoPi-M1",       "0(0)"},
+    {"Allwinnersun8iFamily", 0, NanoPi_NEO,      "NanoPi-NEO",      "1(0)"},
+    {"Allwinnersun8iFamily", 0, NanoPi_NEO_Air,  "NanoPi-NEO-Air",  "2(0)"},
+    {"Allwinnersun8iFamily", 0, NanoPi_M1_Plus,  "NanoPi-M1-Plus",  "3(0)"},
+    {"Allwinnersun8iFamily", 0, NanoPi_Duo,      "NanoPi-Duo",      "4(0)"},
     {"Allwinnersun8iFamily", 0, NanoPi_NEO_Core, "NanoPi-NEO-Core", "5(0)"},
-    {"Allwinnersun8iFamily", 0, NanoPi_K1, "NanoPi-K1", "6(0)"},
-    {"Allwinnersun8iFamily", 0, NanoPi_Hero, "NanoPi-Hero", "7(0)"},
-    {"Allwinnersun8iFamily", 0, NanoPi_Duo2, "NanoPi-Duo2", "8(0)"},
-    {"Allwinnersun8iFamily", 0, NanoPi_R1, "NanoPi-R1", "9(0)"},
+    {"Allwinnersun8iFamily", 0, NanoPi_K1,       "NanoPi-K1",       "6(0)"},
+    {"Allwinnersun8iFamily", 0, NanoPi_Hero,     "NanoPi-Hero",     "7(0)"},
+    {"Allwinnersun8iFamily", 0, NanoPi_Duo2,     "NanoPi-Duo2",     "8(0)"},
+    {"Allwinnersun8iFamily", 0, NanoPi_R1,       "NanoPi-R1",       "9(0)"},
 
     // a64
     {"sun50iw1p1", 0, NanoPi_A64, "NanoPi-A64", "0"},
 
     //allwinner h5
     // kernel 3.x
-    {"sun50iw2", 4, NanoPi_NEO2, "NanoPi-NEO2", "1(0)"},
-    {"sun50iw2", 4, NanoPi_M1_Plus2, "NanoPi-M1-Plus2", "3(0)"}, 
+    {"sun50iw2", 4, NanoPi_NEO2,      "NanoPi-NEO2",      "1(0)"},
+    {"sun50iw2", 4, NanoPi_M1_Plus2,  "NanoPi-M1-Plus2",  "3(0)"},
     {"sun50iw2", 4, NanoPi_NEO_Plus2, "NanoPi-NEO-Plus2", "2(0)"},
     {"sun50iw2", 4, NanoPi_NEO_Core2, "NanoPi-NEO-Core2", "0(0)"},
-    {"sun50iw2", 4, NanoPi_K1_Plus, "NanoPi-K1-Plus", "4(0)"},
+    {"sun50iw2", 4, NanoPi_K1_Plus,   "NanoPi-K1-Plus",   "4(0)"},
 
     // kernel 4.x
-    {"Allwinnersun50iw2Family", 4, NanoPi_NEO2, "NanoPi-NEO2", "1(0)"},
-    {"Allwinnersun50iw2Family", 4, NanoPi_M1_Plus2, "NanoPi-M1-Plus2", "3(0)"},
+    {"Allwinnersun50iw2Family", 4, NanoPi_NEO2,      "NanoPi-NEO2",      "1(0)"},
+    {"Allwinnersun50iw2Family", 4, NanoPi_M1_Plus2,  "NanoPi-M1-Plus2",  "3(0)"},
     {"Allwinnersun50iw2Family", 4, NanoPi_NEO_Plus2, "NanoPi-NEO-Plus2", "2(0)"},
     {"Allwinnersun50iw2Family", 4, NanoPi_NEO_Core2, "NanoPi-NEO-Core2", "0(0)"},
-    {"Allwinnersun50iw2Family", 4, NanoPi_K1_Plus, "NanoPi-K1-Plus", "4(0)"},
+    {"Allwinnersun50iw2Family", 4, NanoPi_K1_Plus,   "NanoPi-K1-Plus",   "4(0)"},
 
     //k2
     {"Amlogic", 0, NanoPi_K2, "NanoPi-K2", ""},
 
     //t4
-    {"nanopi4", 0, NanoPC_T4, "NanoPC-T4",""},
-    {"nanopi4", 1, NanoPi_M4, "NanoPi-M4",""},
-    {"nanopi4", 2, NanoPC_T4, "NanoPC-T4",""},
-    {"nanopi4", 4, NanoPi_NEO4, "NanoPi-NEO4",""},
+    {"nanopi4", 0, NanoPC_T4,   "NanoPC-T4",   ""},
+    {"nanopi4", 1, NanoPi_M4,   "NanoPi-M4",   ""},
+    {"nanopi4", 2, NanoPC_T4,   "NanoPC-T4",   ""},
+    {"nanopi4", 4, NanoPi_NEO4, "NanoPi-NEO4", ""},
 };
 
-static int getFieldValueInCpuInfo(char* hardware, int hardwareMaxLen, char* revision, int revisionMaxLen )
+static int getFieldValueInCpuInfo(char* hardware, int hardwareMaxLen, char* revision, int revisionMaxLen)
 {
     int n,i,j;
-    char lineUntrim[1024], line[1024],line2[1024],*p,*p2;
+    char lineUntrim[1024], line[1024], line2[1024], *p, *p2;
     FILE *f;
     int isGotHardware = 0;
     int isGotRevision = 0;
@@ -104,16 +104,19 @@ static int getFieldValueInCpuInfo(char* hardware, int hardwareMaxLen, char* revi
         if(!fgets(lineUntrim, sizeof(lineUntrim), f)) {
             break;
         } else {
-            j=0;
-            for(i=0; i<strlen(lineUntrim);i++) {
-                if (lineUntrim[i] == ' ' || lineUntrim[i] == '\t' || lineUntrim[i] == '\r' || lineUntrim[i] == '\n') {
+            j = 0;
+            for (i = 0; i < strlen(lineUntrim); i++) {
+                if (lineUntrim[i] == ' '
+                        || lineUntrim[i] == '\t'
+                        || lineUntrim[i] == '\r'
+                        || lineUntrim[i] == '\n') {
                 } else {
                     line[j++]=lineUntrim[i];
                 }
             }
             line[j] = 0x00;
             n = strlen(line);
-            if (n>0) {
+            if (n > 0) {
                 //LOGD("LINE: %s\n", line);
                 #define GetKeyValue(isGot,valP,keyName,buff,buffLen) \
                 if (isGot==0) { \
@@ -129,8 +132,8 @@ static int getFieldValueInCpuInfo(char* hardware, int hardwareMaxLen, char* revi
                         } \
                     } \
                 }
-                GetKeyValue(isGotHardware,p,"Hardware",hardware,hardwareMaxLen);
-                GetKeyValue(isGotRevision,p2,"Revision",revision,revisionMaxLen);
+                GetKeyValue(isGotHardware, p, "Hardware", hardware, hardwareMaxLen);
+                GetKeyValue(isGotRevision, p2, "Revision", revision, revisionMaxLen);
 
                 if (isGotHardware == 1 && isGotRevision == 1) {
                     break;
@@ -146,7 +149,7 @@ static int getFieldValueInCpuInfo(char* hardware, int hardwareMaxLen, char* revi
 static int getAllwinnerBoardID(char* boardId, int boardIdMaxLen )
 {
     int n,i,j;
-    char lineUntrim[1024], line[1024],*p;
+    char lineUntrim[1024], line[1024], *p;
     const char* sunxi_board_id_fieldname = "sunxi_board_id";
     FILE *f;
     int ret = -1;
@@ -160,16 +163,19 @@ static int getAllwinnerBoardID(char* boardId, int boardIdMaxLen )
         if(!fgets(lineUntrim, sizeof(lineUntrim), f)) {
             break;
         } else {
-            j=0;
-            for(i=0; i<strlen(lineUntrim);i++) {
-                if (lineUntrim[i] == ' ' || lineUntrim[i] == '\t' || lineUntrim[i] == '\r' || lineUntrim[i] == '\n') {
+            j = 0;
+            for (i = 0; i < strlen(lineUntrim); i++) {
+                if (lineUntrim[i] == ' '
+                        || lineUntrim[i] == '\t'
+                        || lineUntrim[i] == '\r'
+                        || lineUntrim[i] == '\n') {
                 } else {
                     line[j++]=lineUntrim[i];
                 }
             }
             line[j] = 0x00;
             n = strlen(line);
-            if (n>0) {
+            if (n > 0) {
                 //LOGD("LINE: %s\n", line);
                 if (p = strtok(line, ":")) {
                     if (strncasecmp(p, sunxi_board_id_fieldname, strlen(sunxi_board_id_fieldname)) == 0) {
@@ -210,12 +216,15 @@ int getBoardType(BoardHardwareInfo** retBoardInfo) {
     const char* h3 = "sun8i";
     const char* h5 = "sun50iw2";
     const char* h3_kernel4 = "Allwinnersun8iFamily";
-        const char* h5_kernel4 = "Allwinnersun50iw2Family";
+    const char* h5_kernel4 = "Allwinnersun50iw2Family";
 
     //a64 and amlogic, only check hardware
-    if (strncasecmp(hardware, a64, strlen(a64)) == 0 || strncasecmp(hardware, amlogic, strlen(amlogic)) == 0) {
-        for (i=0; i<(sizeof(gAllBoardHardwareInfo)/sizeof(BoardHardwareInfo)); i++) {
-            if (strncasecmp(gAllBoardHardwareInfo[i].kernelHardware, hardware, strlen(gAllBoardHardwareInfo[i].kernelHardware)) == 0) {
+    if (strncasecmp(hardware, a64, strlen(a64)) == 0
+            || strncasecmp(hardware, amlogic, strlen(amlogic)) == 0) {
+        for (i = 0; i < (sizeof(gAllBoardHardwareInfo)/sizeof(BoardHardwareInfo)); i++) {
+            if (strncasecmp(gAllBoardHardwareInfo[i].kernelHardware,
+                            hardware,
+                            strlen(gAllBoardHardwareInfo[i].kernelHardware)) == 0) {
                 if (retBoardInfo != 0) {
                     *retBoardInfo = &gAllBoardHardwareInfo[i];
                 }
@@ -231,11 +240,15 @@ int getBoardType(BoardHardwareInfo** retBoardInfo) {
         int ret = getAllwinnerBoardID(allwinnerBoardID, sizeof(allwinnerBoardID));
         if (ret == 0) {
             //LOGD("got boardid: %s\n", allwinnerBoardID);
-            for (i=0; i<(sizeof(gAllBoardHardwareInfo)/sizeof(BoardHardwareInfo)); i++) {
+            for (i = 0; i < (sizeof(gAllBoardHardwareInfo)/sizeof(BoardHardwareInfo)); i++) {
                 //LOGD("\t{{ enum, start compare[%d]: %s <--> %s\n", i, gAllBoardHardwareInfo[i].kernelHardware, hardware);
-                if (strncasecmp(gAllBoardHardwareInfo[i].kernelHardware, hardware, strlen(gAllBoardHardwareInfo[i].kernelHardware)) == 0) {
+                if (strncasecmp(gAllBoardHardwareInfo[i].kernelHardware,
+                                hardware,
+                                strlen(gAllBoardHardwareInfo[i].kernelHardware)) == 0) {
                     //LOGD("\t\tMATCH %s\n", hardware);
-                    if (strncasecmp(gAllBoardHardwareInfo[i].allwinnerBoardID, allwinnerBoardID, strlen(gAllBoardHardwareInfo[i].allwinnerBoardID)) == 0) {
+                    if (strncasecmp(gAllBoardHardwareInfo[i].allwinnerBoardID,
+                                    allwinnerBoardID,
+                                    strlen(gAllBoardHardwareInfo[i].allwinnerBoardID)) == 0) {
                         if (retBoardInfo != 0) {
                             *retBoardInfo = &gAllBoardHardwareInfo[i];
                         }
@@ -264,7 +277,7 @@ int getBoardType(BoardHardwareInfo** retBoardInfo) {
     iRev = strtol(revision2, NULL, 16);
 
     // other, check hardware and revision
-    for (i=0; i<(sizeof(gAllBoardHardwareInfo)/sizeof(BoardHardwareInfo)); i++) {
+    for (i = 0; i < (sizeof(gAllBoardHardwareInfo)/sizeof(BoardHardwareInfo)); i++) {
         if (strncasecmp(gAllBoardHardwareInfo[i].kernelHardware, hardware, strlen(gAllBoardHardwareInfo[i].kernelHardware)) == 0) {
             if (gAllBoardHardwareInfo[i].kernelRevision == -1
                     || gAllBoardHardwareInfo[i].kernelRevision == iRev
