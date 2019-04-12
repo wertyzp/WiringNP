@@ -1517,10 +1517,13 @@ int getAlt(int pin) {
         pin = pinToGpio [pin];
     else if (wiringPiMode == WPI_MODE_PHYS)
         pin = physToGpio[pin];
-    else if (wiringPiMode == WPI_MODE_GPIO)    //pin = pinTobcm[pin]; 
-        pin = pin;
-    else return 0;
-
+    else if (wiringPiMode == WPI_MODE_GPIO) {
+        //pin = pinTobcm[pin];
+        // pin = pin;
+        // Nothing
+    } else {
+        return 0;
+    }
     if (-1 == pin) {
         printf("[%s:L%d] the pin:%d  mode: %d is invaild,please check it over!\n", __func__, __LINE__, pin, wiringPiMode);
         return -1;
@@ -1545,9 +1548,13 @@ int getAltSilence(int pin) {
         pin = pinToGpio [pin];
     else if (wiringPiMode == WPI_MODE_PHYS)
         pin = physToGpio[pin];
-    else if (wiringPiMode == WPI_MODE_GPIO)    //pin = pinTobcm[pin]; 
-        pin = pin;
-    else return 0;
+    else if (wiringPiMode == WPI_MODE_GPIO) {
+        // pin = pinTobcm[pin];
+        // pin = pin;
+        // Nothing
+    } else {
+        return 0;
+    }
 
     if (-1 == pin) {
         return -1;
@@ -1803,10 +1810,13 @@ void pullUpDnControl(int pin, int pud) {
             pin = pinToGpio [pin];
         else if (wiringPiMode == WPI_MODE_PHYS)
             pin = physToGpio[pin];
-        else if (wiringPiMode == WPI_MODE_GPIO)
+        else if (wiringPiMode == WPI_MODE_GPIO) {
             // pin = pinTobcm[pin]; 
-            pin = pin;
-        else return;
+            // pin = pin;
+            // Nothing
+        } else {
+            return;
+        }
         if (wiringPiDebug)
             printf("%s,%d,pin:%d\n", __func__, __LINE__, pin);
 
@@ -1879,7 +1889,7 @@ int digitalRead(int pin) {
 		    }
 	    } else if (wiringPiMode == WPI_MODE_GPIO) {
 		    // pin = pinTobcm[pin]; 
-        pin = pin;
+            // pin = pin;
 
 		    if (wiringPiDebug) {
 			    printf(">>> pinTobcm[pin] ret %d\n", pin);
@@ -1902,7 +1912,6 @@ int digitalRead(int pin) {
 int digitalReadSilence(int pin) {
     char c;
     struct wiringPiNodeStruct *node = wiringPiNodes;
-    int oldPin = pin;
 
     if (pinToGpio == 0 || physToGpio == 0) {
         return 0;
@@ -1924,8 +1933,8 @@ int digitalReadSilence(int pin) {
         } else if (wiringPiMode == WPI_MODE_PHYS) {
             pin = physToGpio[pin];
         } else if (wiringPiMode == WPI_MODE_GPIO) {
-        // pin = pinTobcm[pin]; 
-        pin = pin;
+            // pin = pinTobcm[pin];
+            // pin = pin;
             // Nothing
         } else {
             return LOW;
@@ -1992,7 +2001,8 @@ void digitalWrite(int pin, int value) {
             pin = physToGpio[pin];
         else if (wiringPiMode == WPI_MODE_GPIO) {
             // pin = pinTobcm[pin];
-            pin = pin;
+            // pin = pin;
+            // Nothing
         }
         else return;
         if (-1 == pin) {
