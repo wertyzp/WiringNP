@@ -87,7 +87,7 @@ BoardHardwareInfo gAllBoardHardwareInfo[] = {
 
 static int getFieldValueInCpuInfo(char* hardware, int hardwareMaxLen, char* revision, int revisionMaxLen)
 {
-    int n,i,j;
+    unsigned long n, i, j;
     char lineUntrim[1024], line[1024], line2[1024], *p, *p2;
     FILE *f;
     int isGotHardware = 0;
@@ -148,7 +148,7 @@ static int getFieldValueInCpuInfo(char* hardware, int hardwareMaxLen, char* revi
 
 static int getAllwinnerBoardID(char* boardId, int boardIdMaxLen )
 {
-    int n,i,j;
+    unsigned long n, i, j;
     char lineUntrim[1024], line[1024], *p;
     const char* sunxi_board_id_fieldname = "sunxi_board_id";
     FILE *f;
@@ -273,7 +273,7 @@ int getBoardType(BoardHardwareInfo** retBoardInfo) {
 
     char revision2[255];
     sprintf(revision2, "0x%s", revision);
-    int iRev;
+    long iRev;
     iRev = strtol(revision2, NULL, 16);
 
     // other, check hardware and revision
