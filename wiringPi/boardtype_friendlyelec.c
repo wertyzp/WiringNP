@@ -58,7 +58,10 @@ BoardHardwareInfo gAllBoardHardwareInfo[] = {
     {"Allwinnersun8iFamily", 0, NanoPi_R1, "NanoPi-R1", "9(0)"},
 
     // a64
-    {"sun50iw1p1", 0, NanoPi_A64, "NanoPi-A64", "0"},
+    // {"sun50iw1p1", 0, NanoPi_A64, "NanoPi-A64", "0"},
+    
+    // armbian+Neo2
+    {"sun50iw1p1", 4, NanoPi_NEO2, "NanoPi-NEO2", "1(0)"},
 
     //allwinner h5
     // kernel 3.x
