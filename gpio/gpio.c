@@ -1132,15 +1132,20 @@ int main (int argc, char *argv [])
     BoardHardwareInfo* retBoardInfo;
     int ret = getBoardType(&retBoardInfo);
     if (ret >= 0) {
-      if (retBoardInfo->boardTypeId > ALLWINNER_BASE && retBoardInfo->boardTypeId <= ALLWINNER_MAX 
-		&& retBoardInfo->boardTypeId != NanoPi_A64) {
+      if (retBoardInfo->boardTypeId > ALLWINNER_BASE && retBoardInfo->boardTypeId <= ALLWINNER_MAX
+      && retBoardInfo->boardTypeId != NanoPi_A64) {
         printf ("NanoPi Details:\n") ;
-        printf ("  Type: %s, Revision: %d, Maker: FriednlyELEC\n\n", 
-          retBoardInfo->boardDisplayName, retBoardInfo->kernelRevision) ;
+        printf ("  Type: %s, Revision: %d, Maker: FriednlyELEC\n\n",
+               retBoardInfo->boardDisplayName, retBoardInfo->kernelRevision) ;
       } else {
-        printf ("This NanoPi model is currently not supported. ") ;
+        if (retBoardInfo->boardTypeId == NanoPC_T3) {
+          printf(
+              "This NanoPi-T3  is only supported GPIO input and GPIO outpu. "
+              "Please Careful! ");
+        } else {
+          printf ("This NanoPi model is currently not supported. ") ;
+        }
       }
-
     } else {
       printf ("Your NanoPi has an unknown model type. Please report this to\n") ;
       printf ("    support@friendlyarm.com\n") ;

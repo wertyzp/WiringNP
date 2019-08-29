@@ -407,6 +407,90 @@ static char *physNames_duo2 [MAX_PIN_COUNT] =
        NULL            //73
 } ;
 
+static int physToWpi_t3 [MAX_PIN_COUNT] =
+{
+  -1,        // 0
+  -1,  -1,   // 1, 2
+   3,   4,   // 3, 4
+  -1,  -1,   // 5, 6
+   7,   8,   // 7, 8
+
+   9,  10,   // 9, 10
+  11,  12,   //11, 12
+  13,  14,   //13, 14
+  15,  16,   //15, 16
+  17,  18,   //17, 18
+  19,  20,   //19, 20
+  21,  22,   //21, 22
+  23,  24,   //23, 24
+
+  25,  -1,   //25, 26
+  27,  -1,   //27, 28
+  -1,  -1,   //29, 30
+  -1,  -1,   //31, 32
+
+
+   /* ---------nanopi duo end----------- */
+  -1,  -1,   //33, 34
+  -1,  -1,   //35, 36
+
+  -1,  -1,   //37, 38
+
+    /* 39~63 */
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+
+    /* 64~73 */
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+} ;
+
+static char *physNames_t3 [MAX_PIN_COUNT] = 
+{
+  NULL,
+// 32 Pin 
+ "    3.3v", "0v      ",
+ " GPIOD20", "GPIOD16 ", 
+ "I2C0_SCL", "I2C0_SDA",
+ " GPIOC31", "GPIOD0  ",
+ " GPIOC29", "GPIOC30 ",
+ " GPIOD21", "GPIOD17 ",
+ " GPIOB29", "GPIOB28 ",  //13, 14
+ " GPIOB31", "GPIOB30 ",
+ "  GPIOC4", "GPIOC7  ",
+ "  GPIOC8", "GPIOC24 ",
+ " GPIOC28", "GPIOB26 ",
+ "  GPIOD1", "GPIOD8  ",
+ " GPIOC13", "AliGPIO3",  //25, 26
+ " GPIOC14", "AliGPIO5",
+ "      5v", "0v      ",
+
+ /* ---------nanopc t3 end----------- */
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,
+
+/* UART0, tx, rx */
+       NULL, NULL, 
+
+       NULL, NULL,     //39, 40
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,     //49, 50
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,     //59, 60
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,
+       NULL, NULL,     //71, 72
+       NULL            //73
+} ;
 
 static int physToWpi_neocore [MAX_PIN_COUNT] =
 {
@@ -533,6 +617,9 @@ static void readallPhys (int faBoardId, int physPin, int pair)
   } else if (faBoardId == NanoPi_NEO_Core || faBoardId == NanoPi_NEO_Core2) {
       physToWpi = physToWpi_neocore;
       physNames = physNames_neocore;
+  } else if (faBoardId == NanoPC_T3) {
+      physToWpi = physToWpi_t3;
+      physNames = physNames_t3;
   } else {
       return ;
   }
@@ -638,6 +725,9 @@ static void debugReadallPhys (int faBoardId, int physPin)
   } else if (faBoardId == NanoPi_NEO_Core || faBoardId == NanoPi_NEO_Core2) {
       physToWpi = physToWpi_neocore;
       physNames = physNames_neocore;
+  } else if (faBoardId == NanoPC_T3) {
+      physToWpi = physToWpi_t3;
+      physNames = physNames_t3;
   } else {
       return ;
   }
@@ -677,8 +767,12 @@ void NanoPiReadAll()
         && retBoardInfo->boardTypeId <= ALLWINNER_MAX 
         && retBoardInfo->boardTypeId != NanoPi_A64) {
           // nothing to do.
+      } else if(retBoardInfo->boardTypeId == NanoPC_T3) {       
+        printf ("This NanoPC-T3  is only supported GPIO input and GPIO out. \n") ;
+        printf("Please becareful to use this !!! \n");
       } else {
         printf ("This NanoPi model is currently not supported. \n") ;
+        printf ("This NanoPi's boardTypeId is %d .\n",retBoardInfo->boardTypeId);
         return ;
       }
   } else {
@@ -705,10 +799,15 @@ void NanoPiReadAll()
   } else if (retBoardInfo->boardTypeId == NanoPi_Duo 
     || retBoardInfo->boardTypeId == NanoPi_Duo2) {
       pinCount = 32;
+  } else if (retBoardInfo->boardTypeId == NanoPC_T3) {
+      pinCount = 30;
   } else {
       printf ("This NanoPi model(id: %d) is currently not supported. \n", retBoardInfo->boardTypeId) ;
       return ;
   }
+  if (getenv("WIRINGPI_DEBUG") != NULL)
+    printf("This pinCount num is %d .\nDEBUG_READALL is %d.\nwpMode is %d .\n",
+           pinCount, DEBUG_READALL, wpMode);
 
   if (DEBUG_READALL) {
     printf (" +-----+-----+----------+------+---+-%s--+------+----------+-----+-----+\n", retBoardInfo->boardDisplayName) ;
