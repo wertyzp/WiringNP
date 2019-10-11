@@ -72,6 +72,7 @@
 #include <limits.h>
 #include "softPwm.h"
 #include "softTone.h"
+// #include <unistd.h>
 
 #include "wiringPi.h"
 
@@ -138,7 +139,7 @@ struct wiringPiNodeStruct *wiringPiNodes = NULL;
 #ifdef BLOCK_SIZE
 #undef BLOCK_SIZE
 #endif
-#define BLOCK_SIZE (4*1024)
+#define BLOCK_SIZE (6*1024) //setting 6 for support NanoPC-T3
 
 // PWM
 //	Word offsets into the PWM control region
@@ -195,6 +196,20 @@ static volatile uint32_t *pads;
 static volatile uint32_t *timer;
 static volatile uint32_t *timerIrqRaw;
 #endif
+
+/**
+ * add for NanoPC-T3 with S5P6818 chips
+ */
+#define T3_GPIO_BASE    (0xA000)
+#define T3_BP_BASE      (0xC0010000)
+#define POS_GPIO_OUT        0x00
+#define POS_GPIO_ENB        0x04  //for GPIO out enable/1 is OUTMode 0 is InputMode
+#define POS_GPIO_FAD        0x18  //for read input address
+#define POS_GPIO_ALTFEN0    0x20
+#define POS_GPIO_ALTFEN1    0x24
+
+int BoardID  = 0;
+//end for NanoPC-T3
 
 /*add for BananaPro by LeMaker team*/
 // for mmap BananaPro 
@@ -459,6 +474,35 @@ static int pinToGpio_neocore [MAX_PIN_COUNT] ={
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 };
 
+// wPi number to /sys/gpio number
+static int pinToGpio_t3 [MAX_PIN_COUNT] ={
+    0,         // 0
+    -1,   -1,  //  1,  2
+    116, 112,  //  3,  4
+    -1,   -1,  //  5,  6
+    95,   96,  //  7,  8
+    93,   94,  //  9, 10
+    117, 113,  // 11, 12
+    61,   60,  // 13, 14
+    63,   62,  // 15, 16
+    68,   71,  // 17, 18
+    72,   88,  // 19, 20
+    92,   58,  // 21, 22
+    97,  104,  // 23, 24
+    77, -1,    // 25, 26
+    78, -1,    // 27, 28
+    -1, -1,    // 29, 30
+    -1, -1,    // 31, 32
+    -1, -1,    // 33, 34
+    -1, -1,    // 35, 36
+    -1, -1,    // 37, 38
+    /* 39~63 */
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    /* 64~73 */
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+};
+
 
 /*
 static int pinTobcm [64] ={
@@ -524,7 +568,40 @@ static int physToGpio_neo [MAX_PIN_COUNT] ={
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 };
 
+static int physToGpio_t3 [MAX_PIN_COUNT] ={
+    -1, 
+    /* 30 Pin */
+    -1,   -1,  //  1,  2
+    116, 112,  //  3,  4
+    -1,   -1,  //  5,  6
+    95,   96,  //  7,  8
+    93,   94,  //  9, 10
+    117, 113,  // 11, 12
+    61,   60,  // 13, 14
+    63,   62,  // 15, 16
+    68,   71,  // 17, 18
+    72,   88,  // 19, 20
+    92,   58,  // 21, 22
+    97,  104,  // 23, 24
+    77, -1,   // 25, 26
+    78, -1,   // 27, 28
+    -1, -1,   // 29, 30
 
+    /* 12 Pin */
+    17, -1,   // 31, 32
+    -1, -1,   // 33, 34
+    -1, -1,   // 35, 36
+
+    /* UART0 Tx,Rx */
+    4, 5,     // 37, 38
+
+    /* 39~63 */
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+
+    /* 64~73 */
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+};
 
 static int physToGpio_neocore [MAX_PIN_COUNT] ={
     -1, 
@@ -700,6 +777,18 @@ static int syspin_neocore [MAX_PIN_COUNT] ={
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 };
 
+static int syspin_t3 [MAX_PIN_COUNT] ={
+    -1, -1, 2, 3, 4, 5, 6, 7, 
+    8, 9, 10, 11, 12, 13, 14, 15,
+    16, 17, 18, 19, 20, 21, 22, 23,
+    24, 25, 26, 27, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+
+    /* 64~73 */
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+};
+
 
 static int syspin_m1 [MAX_PIN_COUNT] ={
     -1, -1, 2, 3, 4, 5, 6, 7, 
@@ -805,6 +894,43 @@ static int physToPin_neo [MAX_PIN_COUNT] = //return wiringPI pin
     -1,  -1,  // 33, 34
     -1,  -1,  // 35, 36
     17,  18,  // 37, 38
+
+    /* 39~63 */
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+
+    /* 64~73 */
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+};
+
+static int physToPin_t3 [MAX_PIN_COUNT] = //return wiringPI pin
+{
+    -1,        // 0
+  -1,  -1,   // 1, 2
+   3,   4,   // 3, 4
+  -1,  -1,   // 5, 6
+   7,   8,   // 7, 8
+
+   9,  10,   // 9, 10
+  11,  12,   //11, 12
+  13,  14,   //13, 14
+  15,  16,   //15, 16
+  17,  18,   //17, 18
+  19,  20,   //19, 20
+  21,  22,   //21, 22
+  23,  24,   //23, 24
+
+  25,  -1,   //25, 26
+  27,  -1,   //27, 28
+  -1,  -1,   //29, 30
+
+   /* ---------nanopc t3 end----------- */
+
+  -1,  -1,   //31, 32
+  -1,  -1,   //33, 34
+  -1,  -1,   //35, 36
+
+  -1,  -1,   //37, 38
 
     /* 39~63 */
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -932,9 +1058,9 @@ static int physToPin_duo2 [MAX_PIN_COUNT] = //return wiringPI pin //note: same a
 static int BP_PIN_MASK[9][32] = //[BANK]  [INDEX]
 {
     { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, -1, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,}, //PA
-    {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,}, //PB
-    { 0, 1, 2, 3, -1, -1, -1, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,}, //PC
-    {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 14, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,}, //PD
+    {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 26, -1, 28, 29, 30, 31,}, //PB
+    { 0,  1,  2,  3,  4, -1, -1,  7,  8, -1, -1, -1, -1, 13, 14, -1, -1, -1, -1, -1, -1, -1, -1, -1, 24, -1, -1, -1, 28, 29, 30, 31,}, //PC
+    { 0,  1, -1, -1, -1, -1, -1, -1,  8, -1, -1, -1, -1, -1, 14, -1, 16, 17, -1, -1, 20, 21, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,}, //PD
     {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,}, //PE
     {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,}, //PF
     {-1, -1, -1, -1, -1, -1, 6, 7, 8, 9, -1, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,}, //PG
@@ -1121,98 +1247,217 @@ int sunxi_get_gpio_mode(int pin) {
     int index = pin - (bank << 5);
     int offset = ((index - ((index >> 3) << 3)) << 2);
     uint32_t reval = 0;
-    uint32_t phyaddr = SUNXI_GPIO_BASE + (bank * 36) + ((index >> 3) << 2);
+    volatile uint32_t phyaddr =0;
+
+    if (BP_PIN_MASK[bank][index] == -1) {
+      printf("line:%d pin(=%d) number error\n", __LINE__, pin);
+      return reval;
+    }
+
+    if (BoardID == NanoPC_T3) {
+      phyaddr = T3_GPIO_BASE + (bank * 4096) + POS_GPIO_ENB;
+      if (wiringPiDebug)
+        printf("func:%s pin:%d,  bank:%d index:%d phyaddr:0x%x\n", __func__,
+               pin, bank, index, phyaddr);
+      
+      regval = *(uint32_t *)((uint32_t)gpio + phyaddr);
+      if (wiringPiDebug)
+        printf("read reg val: 0x%x offset:%d  return: %d\n", regval, offset,
+               reval);
+      reval = (regval >> index) & 1;
+      if (wiringPiDebug)
+        printf("read reg val: 0x%x offset:%d  return: %d\n", regval, offset,
+               reval);
+      return reval;
+    }
+
+    phyaddr = SUNXI_GPIO_BASE + (bank * 36) + ((index >> 3) << 2);
     if (wiringPiDebug)
         printf("func:%s pin:%d,  bank:%d index:%d phyaddr:0x%x\n", __func__, pin, bank, index, phyaddr);
-    if (BP_PIN_MASK[bank][index] != -1) {
-        regval = readl(phyaddr);
-        if (wiringPiDebug)
-            printf("read reg val: 0x%x offset:%d  return: %d\n", regval, offset, reval);
-        // reval=regval &(reval+(7 << offset));
-        reval = (regval >> offset)&7;
-        if (wiringPiDebug)
-            printf("read reg val: 0x%x offset:%d  return: %d\n", regval, offset, reval);
-        return reval;
-    } else {
-        printf("line:%d pin(=%d) number error\n", __LINE__, pin);
-        return reval;
-    }
+    regval = readl(phyaddr);
+    if (wiringPiDebug)
+        printf("read reg val: 0x%x offset:%d  return: %d\n", regval, offset, reval);
+    // reval=regval &(reval+(7 << offset));
+    reval = (regval >> offset)&7;
+    if (wiringPiDebug)
+        printf("read reg val: 0x%x offset:%d  return: %d\n", regval, offset, reval);
+    return reval;
 }
 
 void sunxi_set_gpio_mode(int pin, int mode) {
-    uint32_t regval = 0;
-    int bank = pin >> 5;
-    int index = pin - (bank << 5);
-    int offset = ((index - ((index >> 3) << 3)) << 2);
-    uint32_t phyaddr = SUNXI_GPIO_BASE + (bank * 36) + ((index >> 3) << 2);
-    if (wiringPiDebug)
-        printf("func:%s pin:%d, MODE:%d bank:%d index:%d phyaddr:0x%x\n", __func__, pin, mode, bank, index, phyaddr);
-    if (BP_PIN_MASK[bank][index] != -1) {
-        regval = readl(phyaddr);
-        if (wiringPiDebug)
-            printf("read reg val: 0x%x offset:%d\n", regval, offset);
-        if (INPUT == mode) {
-            regval &= ~(7 << offset);
-            writel(regval, phyaddr);
-            regval = readl(phyaddr);
-            if (wiringPiDebug)
-                printf("Input mode set over reg val: 0x%x\n", regval);
-        } else if (OUTPUT == mode) {
-            regval &= ~(7 << offset);
-            regval |= (1 << offset);
-            if (wiringPiDebug)
-                printf("Out mode ready set val: 0x%x\n", regval);
-            writel(regval, phyaddr);
-            regval = readl(phyaddr);
-            if (wiringPiDebug)
-                printf("Out mode set over reg val: 0x%x\n", regval);
-        }
-        else if (PWM_OUTPUT == mode) {
-            // set pin PWMx to pwm mode
-            regval &= ~(7 << offset);
-            regval |= (0x3 << offset);
-            if (wiringPiDebug)
-                printf(">>>>>line:%d PWM mode ready to set val: 0x%x\n", __LINE__, regval);
-            writel(regval, phyaddr);
-            delayMicroseconds(200);
-            regval = readl(phyaddr);
-            if (wiringPiDebug)
-                printf("<<<<<PWM mode set over reg val: 0x%x\n", regval);
-            //clear all reg
-            writel(0, SUNXI_PWM_CTRL_REG);
-            writel(0, SUNXI_PWM_CH0_PERIOD);
+  uint32_t regval = 0;
+  int bank = pin >> 5;
+  int index = pin - (bank << 5);
+  int offset = ((index - ((index >> 3) << 3)) << 2);
+  uint32_t phyaddr = 0;
 
-            //set default M:S to 1/2
-            sunxi_pwm_set_period(1024);
-            sunxi_pwm_set_act(512);
-            pwmSetMode(PWM_MODE_MS);
-            sunxi_pwm_set_clk(PWM_CLK_DIV_120); //default clk:24M/120
-            delayMicroseconds(200);
-        }
+  // Preper date:
+  uint32_t AltFun_addr = 0;
+  int AltF_bit = 0;
+
+  if (BP_PIN_MASK[bank][index] == -1) {
+    printf("line:%d pin(%d) number error\n", __LINE__, pin);
+    return;
+  }
+
+  if (BoardID == NanoPC_T3) {
+    // Clear ALTFunciont
+    if (index > 15) {
+      AltF_bit = 2 * (index - 16);
+      AltFun_addr = T3_GPIO_BASE + (bank * 4096) + POS_GPIO_ALTFEN1;
     } else {
-        printf("line:%d pin(%d) number error\n", __LINE__,pin);
+      AltF_bit = 2 * index;
+      AltFun_addr = T3_GPIO_BASE + (bank * 4096) + POS_GPIO_ALTFEN0;
+    }
+    if (wiringPiDebug)
+      printf(
+          "func:%s pin:%d,  bank:%d index:%d AltFun_addr:0x%x AltF_bit: %d "
+          ".\n",
+          __func__, pin, bank, index, AltFun_addr, AltF_bit);
+
+#define regval_AltF *(uint32_t *)((uint32_t)gpio + AltFun_addr)
+
+    if (wiringPiDebug)
+      printf("Before clear,AltF values is 0x%x .\n", regval_AltF);
+      
+    regval_AltF &= ~(3 << AltF_bit);  // clear 2 bit with ALTFUN
+
+    if (wiringPiDebug)
+      printf("After clear, AltF values is 0x%x .\n", regval_AltF);
+
+    // Set ALTFunc bit
+    /*see more info with
+    http://wiki.friendlyarm.com/wiki/images/d/d5/NanoPC-T2-T3-1603-Schematic.pdf
+    GPIOB:26 28 29 30 31    fun1 [Altf_bit+1:Altf_bit]  01
+    GPIOC:4 7 8 13 14 24    fun1
+    
+    GPIOC:28 29 30 31       fun0 [Altf_bit+1:Altf_bit]  00
+    GPIOD:0 1 8 16 17 20 21 fun0
+    */
+    if (pin < 92) {  // setting Alt func bit.92 means GPIOC28
+      regval_AltF |= (1 << AltF_bit);
+
+      if (wiringPiDebug)
+        printf("After set , AltF values is  0x%x .\n", regval_AltF);
     }
 
+    phyaddr = T3_GPIO_BASE + (bank * 4096) + POS_GPIO_ENB;
+    if (wiringPiDebug) {
+      printf("func:%s pin:%d,  bank:%d index:%d phyaddr:0x%x\n", __func__, pin,
+             bank, index, phyaddr);
+    }
+    // regval = *(uint32_t *)((uint32_t)gpio + phyaddr);
+#define regvals *(uint32_t *)((uint32_t)gpio + phyaddr)  // in NanoPC-T3 ,only after #define bit address can
+                                                         // save value,i don't know why....
+    if (wiringPiDebug)  // waste me lots of time....  >_<
+      printf("read reg val: 0x%x offset:%d .\n", regvals, offset);
+      
+    if (INPUT == mode) {
+      regvals &= ~(1 << index);  // setting INPUT mode by bit 0
+
+      if (wiringPiDebug) printf("Input mode set over reg val: 0x%x\n", regvals);
+    } else if (OUTPUT == mode) {
+      regvals |= (1 << index);  // setting OUT mode by bit 1
+
+      if (wiringPiDebug)
+        printf("Output mode set over reg val: 0x%x\n", regvals);
+    } else if (PWM_OUTPUT == mode) {
+      printf("not yet support NanoPC-T3 to pwm out mode!");
+    }
     return;
+  }
+
+  phyaddr = SUNXI_GPIO_BASE + (bank * 36) + ((index >> 3) << 2);
+  if (wiringPiDebug)
+       printf("func:%s pin:%d, MODE:%d bank:%d index:%d phyaddr:0x%x\n", __func__, pin, mode, bank, index, phyaddr);
+    regval = readl(phyaddr);
+  if (wiringPiDebug) 
+        printf("read reg val: 0x%x offset:%d\n", regval, offset);
+  if (INPUT == mode) {
+    regval &= ~(7 << offset);
+    writel(regval, phyaddr);
+    regval = readl(phyaddr);
+    if (wiringPiDebug) 
+    printf("Input mode set over reg val: 0x%x\n", regval);
+  } else if (OUTPUT == mode) {
+    regval &= ~(7 << offset);
+    regval |= (1 << offset);
+    if (wiringPiDebug) 
+    printf("Out mode ready set val: 0x%x\n", regval);
+    writel(regval, phyaddr);
+    regval = readl(phyaddr);
+    if (wiringPiDebug) 
+    printf("Out mode set over reg val: 0x%x\n", regval);
+  } 
+  else if (PWM_OUTPUT == mode) {
+    // set pin PWMx to pwm mode
+    regval &= ~(7 << offset);
+    regval |= (0x3 << offset);
+    if (wiringPiDebug)
+      printf(">>>>>line:%d PWM mode ready to set val: 0x%x\n", __LINE__, regval);
+    writel(regval, phyaddr);
+    delayMicroseconds(200);
+    regval = readl(phyaddr);
+    if (wiringPiDebug) 
+    printf("<<<<<PWM mode set over reg val: 0x%x\n", regval);
+    //clear all reg
+    writel(0, SUNXI_PWM_CTRL_REG);
+    writel(0, SUNXI_PWM_CH0_PERIOD);
+
+    //set default M:S to 1/2
+    sunxi_pwm_set_period(1024);
+    sunxi_pwm_set_act(512);
+    pwmSetMode(PWM_MODE_MS);
+    sunxi_pwm_set_clk(PWM_CLK_DIV_120); //default clk:24M/120
+    delayMicroseconds(200);
+  }
+
+  return;
 }
 
 void sunxi_digitalWrite(int pin, int value) {
     uint32_t regval = 0;
+    uint32_t GPIOOUT_addr = 0;
     int bank = pin >> 5;
     int index = pin - (bank << 5);
+    if (BP_PIN_MASK[bank][index] == -1) {
+      printf("pin number error\n");
+      return;
+    }
+    if (BoardID == NanoPC_T3) {
+      GPIOOUT_addr = T3_GPIO_BASE + (bank * 4096);
+      if (wiringPiDebug)
+        printf("func:%s pin:%d, value:%d bank:%d index:%d phyaddr:0x%x\n",
+               __func__, pin, value, bank, index, GPIOOUT_addr);
+//in NanoPC-T3 ,only after #define bit address can save value,i don't know why....
+// 在NanoPC-T3上，如果要修改寄存器里的数据，一定要#define之后操作才行，
+#define regval_out *(uint32_t *)((uint32_t)gpio + GPIOOUT_addr)
+      if (wiringPiDebug)
+        printf("befor write reg val: 0x%x,index:%d\n", regval_out, index);
+      if (0 == value) {
+        regval_out &= ~(1 << index);
+        if (wiringPiDebug)
+          printf("LOW val set over reg val: 0x%x\n", regval_out);
+      } else {
+        regval_out |= (1 << index);
+        if (wiringPiDebug)
+          printf("HIGH val set over reg val: 0x%x\n", regval_out);
+      }
+      return;
+    }
+
     uint32_t phyaddr = SUNXI_GPIO_BASE + (bank * 36) + 0x10; // +0x10 -> data reg
     if (wiringPiDebug)
-        printf("func:%s pin:%d, value:%d bank:%d index:%d phyaddr:0x%x\n", __func__, pin, value, bank, index, phyaddr);
-    if (BP_PIN_MASK[bank][index] != -1) {
-        regval = readl(phyaddr);
-        if (wiringPiDebug)
-            printf("befor write reg val: 0x%x,index:%d\n", regval, index);
-        if (0 == value) {
-            regval &= ~(1 << index);
-            writel(regval, phyaddr);
-            regval = readl(phyaddr);
-            if (wiringPiDebug)
-                printf("LOW val set over reg val: 0x%x\n", regval);
+      printf("func:%s pin:%d, value:%d bank:%d index:%d phyaddr:0x%x\n", __func__, pin, value, bank, index, phyaddr);
+    regval = readl(phyaddr);
+    if (wiringPiDebug)
+      printf("befor write reg val: 0x%x,index:%d\n", regval, index);
+    if (0 == value) {
+      regval &= ~(1 << index);
+      writel(regval, phyaddr);
+      regval = readl(phyaddr);
+      if (wiringPiDebug) 
+      printf("LOW val set over reg val: 0x%x\n", regval);
         } else {
             regval |= (1 << index);
             writel(regval, phyaddr);
@@ -1220,18 +1465,39 @@ void sunxi_digitalWrite(int pin, int value) {
             if (wiringPiDebug)
                 printf("HIGH val set over reg val: 0x%x\n", regval);
         }
-    } else {
-        printf("pin number error\n");
-    }
+    
 
     return;
 }
 
 int sunxi_digitalRead(int pin) {
     uint32_t regval = 0;
+    uint32_t reval = 0;
+    uint32_t phyaddr;
     int bank = pin >> 5;
     int index = pin - (bank << 5);
-    uint32_t phyaddr = SUNXI_GPIO_BASE + (bank * 36) + 0x10; // +0x10 -> data reg
+    if (BP_PIN_MASK[bank][index] == -1) {
+      printf("line:%d pin(=%d) number error\n", __LINE__, pin);
+      return regval;
+    }
+
+    if (BoardID == NanoPC_T3) {
+      phyaddr = T3_GPIO_BASE + (bank * 4096) + POS_GPIO_FAD;
+      if (wiringPiDebug)
+        printf("func:%s pin:%d,  bank:%d index:%d phyaddr:0x%x\n", __func__,
+               pin, bank, index, phyaddr);
+      regval = *(uint32_t *)((uint32_t)gpio + phyaddr);
+      if (wiringPiDebug)
+        printf("read reg val: 0x%x  pin:%d  return: %d\n", regval, pin,
+               reval);
+      reval = (regval >> index) & 1;
+      if (wiringPiDebug)
+        printf("read reg val: 0x%x  pin:%d  return: %d\n", regval, pin,
+               reval);
+      return reval;
+    }
+
+    phyaddr = SUNXI_GPIO_BASE + (bank * 36) + 0x10; // +0x10 -> data reg
     if (wiringPiDebug)
         printf("func:%s pin:%d,bank:%d index:%d phyaddr:0x%x\n", __func__, pin, bank, index, phyaddr);
     if (BP_PIN_MASK[bank][index] != -1) {
@@ -1386,7 +1652,11 @@ int piBoardRev(void) {
             printf("piBoardRev:  %d\n", version);
         return BPRVER;
       } else {
-        printf ("This NanoPi model is currently not supported. ") ;
+        if (retBoardInfo->boardTypeId == NanoPC_T3) {
+          printf("if use NanoPC-T3, only support GPIO input and GPIO out!!\n");
+        } else {
+          printf("This NanoPi model is currently not supported. \n");
+        }
       }
     } else {
         piBoardRevOops("Is not NanoPi based board. ");
@@ -1409,8 +1679,8 @@ void piBoardId(int *model, int *rev, int *mem, int *maker, int *overVolted) {
     BoardHardwareInfo* retBoardInfo;
     int ret = getBoardType(&retBoardInfo);
     if (ret >= 0) {
-        if (retBoardInfo->boardTypeId > ALLWINNER_BASE && retBoardInfo->boardTypeId <= ALLWINNER_MAX 
-                && retBoardInfo->boardTypeId != NanoPi_A64) {
+        if ((retBoardInfo->boardTypeId > ALLWINNER_BASE && retBoardInfo->boardTypeId <= ALLWINNER_MAX 
+                && retBoardInfo->boardTypeId != NanoPi_A64)||retBoardInfo->boardTypeId == NanoPC_T3) {
             *model = retBoardInfo->boardTypeId;
             *rev = PI_VERSION_1_2;
             *mem = 1024;
@@ -2433,14 +2703,30 @@ int wiringPiSetup(void) {
         printf("wiringPi: wiringPiSetup called\n");
 
     //    boardRev = piBoardRev();
+    // If we're running on a compute module, then wiringPi pin numbers don't really many anything...
+    piBoardId(&model, &rev, &mem, &maker, &overVolted);
+    wiringPiMode = WPI_MODE_PINS;
+
+    int faBoardId = model;
+    BoardID = model;
 
     // Open the master /dev/memory device
     if ((fd = open("/dev/mem", O_RDWR | O_SYNC | O_CLOEXEC)) < 0)
         return wiringPiFailure(WPI_ALMOST, "wiringPiSetup: Unable to open /dev/mem: %s\n", strerror(errno));
 
+    int BASE_Address = 0;
+    if (BoardID == NanoPC_T3) {
+      BASE_Address = T3_BP_BASE;
+
+    } else {
+      BASE_Address = GPIO_BASE_BP;
+    }
+
+    if (wiringPiDebug)
+        printf(" *gpio base_address is %X . \n", BASE_Address);
     // GPIO:
     // BLOCK SIZE * 2 increases range to include pwm addresses
-    gpio = (uint32_t *) mmap(0, BLOCK_SIZE*10, PROT_READ | PROT_WRITE, MAP_SHARED, fd, GPIO_BASE_BP);
+    gpio = (uint32_t *) mmap(0, BLOCK_SIZE*10, PROT_READ | PROT_WRITE, MAP_SHARED, fd, BASE_Address);
     if ((int32_t) gpio == -1)
         return wiringPiFailure(WPI_ALMOST, "wiringPiSetup: mmap (GPIO) failed: %s\n", strerror(errno));
 
@@ -2461,11 +2747,7 @@ int wiringPiSetup(void) {
 
     initialiseEpoch();
 
-    // If we're running on a compute module, then wiringPi pin numbers don't really many anything...
-    piBoardId(&model, &rev, &mem, &maker, &overVolted);
-    wiringPiMode = WPI_MODE_PINS;
 
-    int faBoardId = model;
     if (faBoardId == NanoPi_M1
             || faBoardId == NanoPi_M1_Plus
             || faBoardId == NanoPi_M1_Plus2
@@ -2492,14 +2774,24 @@ int wiringPiSetup(void) {
         physToGpio = physToGpio_duo2;
         physToPin = physToPin_duo2;
         syspin = syspin_duo2;
+    } else if (faBoardId == NanoPC_T3) {
+        pinToGpio = pinToGpio_t3;
+        physToGpio = physToGpio_t3;
+        physToPin = physToPin_t3;
+        syspin = syspin_t3;
     } else if (faBoardId == NanoPi_NEO_Core || faBoardId == NanoPi_NEO_Core2) {
 	    pinToGpio = pinToGpio_neocore;
 	    physToGpio = physToGpio_neocore;
 	    physToPin = physToPin_neocore;
 	    syspin = syspin_neocore;
     } else {
+            if (wiringPiDebug)
+        printf("wiringPi: wiringPiSetup fail!\n");
 	    return -1;
     }
+
+    if (wiringPiDebug)
+      printf("wiringPi: wiringPiSetup success!\n");
 
     return 0;
 }
