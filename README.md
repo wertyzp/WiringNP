@@ -12,8 +12,8 @@ NanoPi M1
 NanoPi M1 Plus  
 NanoPi NEO Core  
 NanoPi NEO Core2  
-NanoPi K1 Plus
-NanoPC T3
+NanoPi K1 Plus  
+NanoPC T3  
   
 # Installation
 
