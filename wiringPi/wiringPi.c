@@ -2003,7 +2003,7 @@ void pinMode(int pin, int mode) {
     }
 
     // On-board pin
-    if (pin > 0 && pin < MAX_PIN_COUNT) {
+    if (pin >= 0 && pin < MAX_PIN_COUNT) {
         if (wiringPiMode == WPI_MODE_PINS) {
             pin = pinToGpio[pin];
             if (wiringPiDebug) {
@@ -2079,7 +2079,7 @@ void pullUpDnControl(int pin, int pud) {
 
     pud = upDnConvert[pud];
 
-    if (pin > 0 && pin < MAX_PIN_COUNT) {
+    if (pin >= 0 && pin < MAX_PIN_COUNT) {
         if (wiringPiMode == WPI_MODE_PINS)
             pin = pinToGpio [pin];
         else if (wiringPiMode == WPI_MODE_PHYS)
@@ -2128,7 +2128,7 @@ int digitalRead(int pin) {
         //printf("%d %s,%d invalid pin,please check it over.\n",pin,__func__, __LINE__);
         return 0;
     }
-    if (pin > 0 && pin < MAX_PIN_COUNT) {
+    if (pin >= 0 && pin < MAX_PIN_COUNT) {
         if (wiringPiMode == WPI_MODE_GPIO_SYS) { // Sys mode
 		    if (wiringPiDebug) {
 			    printf("in digitalRead, wiringPiMode == WPI_MODE_GPIO_SYS\n");
@@ -2194,7 +2194,7 @@ int digitalReadSilence(int pin) {
         return 0;
     }
 
-    if (pin > 0 && pin < MAX_PIN_COUNT) {
+    if (pin >= 0 && pin < MAX_PIN_COUNT) {
         if (wiringPiMode == WPI_MODE_GPIO_SYS) { // Sys mode
             if (sysFds [pin] == -1) {
                 return LOW;
@@ -2236,7 +2236,7 @@ void digitalWrite(int pin, int value) {
     if (wiringPiDebug)
         printf("%s,%d\n", __func__, __LINE__);
 
-    if (pin > 0 && pin < MAX_PIN_COUNT) {
+    if (pin >= 0 && pin < MAX_PIN_COUNT) {
         /**/ if (wiringPiMode == WPI_MODE_GPIO_SYS) // Sys mode
         {
             if (wiringPiDebug) {
